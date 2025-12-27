@@ -149,6 +149,14 @@ function TaskManager.startTask(player, taskId, amount)
         return false
     end
 
+    local resultId = db.storeQuery(string.format("SELECT Id FROM PlayerTasks WHERE PlayerId = %d AND Paused = 0 AND Active = 1", player:getGuid()))
+
+    if resultId ~= false then
+        player:sendTextMessage(MESSAGE_STATUS_WARNING, "Start task failed. You already have an active task.")
+        result.free(resultId)
+        return false
+    end
+
     local success = db.query(string.format(
             "INSERT INTO PlayerTasks (PlayerId, TaskId, Amount, Progress, Paused, Finished, Active, StartTime, EndTime) VALUES (%d, %d, %d, 0, 0, 0, 1, NOW(), NULL)",
             player:getGuid(),
