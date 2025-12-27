@@ -1,0 +1,64 @@
+name: Build und Deploy TFS
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Code auschecken
+        uses: actions/checkout@v4
+
+      - name: C++ Abhängigkeiten installieren (z.B. CMake falls nötig)
+        run: sudo apt-get update && sudo apt-get install -y cmake build-essential
+
+      - name: Build (hier ggf. anpassen an deinen Build-Prozess)
+        run: |
+          mkdir -p build
+          cd build
+          cmake ..
+          make
+
+      - name: Build-Output sammeln
+        run: |
+          mkdir -p ./publish
+          cp ./build/theforgottenserver.exe ./publish/
+          cp -r ./data ./publish/data
+
+      - name: Artefakte hochladen
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfs-build
+          path: ./publish
+          include-hidden-files: true
+          overwrite: true
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Artefakte herunterladen
+        uses: actions/download-artifact@v4
+        with:
+          name: tfs-build
+          path: ./publish
+
+      - name: SSH-Schlüssel einrichten
+        uses: webfactory/ssh-agent@v0.8.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Dateien auf VM kopieren
+        run: |
+          scp -o StrictHostKeyChecking=no -r ./publish/* "${{ secrets.SSH_USERNAME }}@${{ secrets.VM_HOST }}:${{ secrets.DEPLOY_PATH }}"
+
+      - name: Forgotten Server starten
+        run: |
+          ssh -o StrictHostKeyChecking=no "${{ secrets.SSH_USERNAME }}@${{ secrets.VM_HOST }}" << EOF
+            cd "${{ secrets.DEPLOY_PATH }}"
+            Start-Process -FilePath "${{ secrets.DEPLOY_PATH }}\\theforgottenserver.exe"
+          EOF
