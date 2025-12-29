@@ -241,6 +241,7 @@ function TaskManager.resumeTask(player, taskId)
     result.free(resultId)
 
     db.query(string.format("UPDATE PlayerTasks SET Paused = 0 WHERE Id = %d", playerTaskId))
+    player:sendExtendedOpcode(EXTENDED_OPCODES.RESUME_TASK)
     return true
 end
 
