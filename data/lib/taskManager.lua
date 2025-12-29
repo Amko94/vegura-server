@@ -70,7 +70,6 @@ function parseJsonArray(jsonStr, isStringArray)
     return result
 end
 
--- OPTIMIERTE VERSION: Größere Chunks, kein Delay
 function TaskManager.sendAvailableTaskList(player)
     if not player then
         return false
@@ -78,8 +77,7 @@ function TaskManager.sendAvailableTaskList(player)
 
     local fullList = TaskManager.getAllTaskMonsters()
 
-    -- Größere Chunk-Größe = weniger Pakete = schneller
-    local CHUNK_SIZE = 25  -- Vorher: 10 (2.5x mehr Tasks pro Paket)
+    local CHUNK_SIZE = 25
 
     local totalChunks = math.ceil(#fullList / CHUNK_SIZE)
 
@@ -95,14 +93,12 @@ function TaskManager.sendAvailableTaskList(player)
         print("[TaskManager] Chunk " .. math.ceil(i / CHUNK_SIZE) .. "/" .. totalChunks .. " sent (" .. #chunk .. " tasks)")
     end
 
-    -- Signal an Client, dass alle Chunks versendet sind
     player:sendExtendedOpcode(4, "TASKLIST_COMPLETE")
     print("[TaskManager] All tasks sent - Total: " .. #fullList)
 
     return true
 end
 
--- Alternative: Alles auf einmal senden (wenn nicht zu groß)
 function TaskManager.sendAvailableTaskListDirect(player)
     if not player then
         return false
@@ -110,7 +106,6 @@ function TaskManager.sendAvailableTaskListDirect(player)
 
     local fullList = TaskManager.getAllTaskMonsters()
 
-    -- Kompaktes Format: Nur essenzielle Daten
     local compactList = {}
     for _, task in ipairs(fullList) do
         table.insert(compactList, {
@@ -135,6 +130,16 @@ function TaskManager.sendAvailableTaskListDirect(player)
     end
 end
 
+function TaskManager.checkPlayerHasActiveTask(player)
+    local resultId = db.storeQuery(string.format("SELECT Id FROM PlayerTasks WHERE PlayerId = %d AND Paused = 0 AND Active = 1", player:getGuid()))
+
+    if resultId ~= false then
+        player:sendTextMessage(MESSAGE_STATUS_WARNING, "Start task failed. You already have an active task.")
+        result.free(resultId)
+        return true
+    end
+end
+
 function TaskManager.startTask(player, taskId, amount)
     if not player or not taskId or amount == nil then
         print("[TaskManager] Missing Data: TaskId:", taskId, "Amount:", amount)
@@ -149,13 +154,7 @@ function TaskManager.startTask(player, taskId, amount)
         return false
     end
 
-    local resultId = db.storeQuery(string.format("SELECT Id FROM PlayerTasks WHERE PlayerId = %d AND Paused = 0 AND Active = 1", player:getGuid()))
-
-    if resultId ~= false then
-        player:sendTextMessage(MESSAGE_STATUS_WARNING, "Start task failed. You already have an active task.")
-        result.free(resultId)
-        return false
-    end
+    TaskManager.checkPlayerHasActiveTask(player)
 
     local success = db.query(string.format(
             "INSERT INTO PlayerTasks (PlayerId, TaskId, Amount, Progress, Paused, Finished, Active, StartTime, EndTime) VALUES (%d, %d, %d, 0, 0, 0, 1, NOW(), NULL)",
@@ -221,6 +220,13 @@ end
 
 function TaskManager.resumeTask(player, taskId)
     if not player or not taskId then
+        return false
+    end
+
+    local haveActiveTask = TaskManager.checkPlayerHasActiveTask(player)
+
+    if haveActiveTask == true then
+        player:sendExtendedOpcode(EXTENDED_ERROR_OPCODES.RESUME_ERROR)
         return false
     end
 
@@ -323,7 +329,7 @@ function TaskManager.sendTasksToClient(player)
     end
 
     local jsonString = json.encode(array)
-    player:sendExtendedOpcode(3, jsonString)
+    player:sendExtendedOpcode(EXTENDED_OPCODES.SEND_TASKS, jsonString)
 end
 
 function TaskManager.updateMaxAmount(player, taskId)

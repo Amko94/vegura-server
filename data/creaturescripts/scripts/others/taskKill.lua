@@ -15,8 +15,6 @@ function onKill(creature, target)
     end
 
     local killedName = target:getName():lower()
-    print("[TASK DEBUG] Spieler hat Monster getötet:", killedName)
-
     local function sendProgressMessage(taskName, remaining)
         local message = string.format("[%s] Progress: %d monsters left to kill", taskName, remaining)
         player:sendTextMessage(MESSAGE_STATUS_CONSOLE_ORANGE, message)

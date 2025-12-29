@@ -1,4 +1,4 @@
-local EXTENDED_OPCODES = {
+EXTENDED_OPCODES = {
     START_TASK = 1,
     KILL_UPDATE = 2,
     SEND_TASKS = 3,
@@ -6,6 +6,10 @@ local EXTENDED_OPCODES = {
     RESUME_TASK = 5,
     PAUSE_TASK = 6,
     CANCEL_TASK = 7
+}
+
+EXTENDED_ERROR_OPCODES = {
+    RESUME_ERROR = 101
 }
 
 function onExtendedOpcode(player, opcode, buffer)
