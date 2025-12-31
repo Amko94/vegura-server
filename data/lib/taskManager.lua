@@ -30,13 +30,13 @@ function TaskManager.getAllTaskMonsters()
             monsterNames = monsterNames,
             lookTypeIds = lookTypeIds,
             category = result.getNumber(resultId, "Category"),
-            maxAmount = result.getNumber(resultId, "MaxAmount")
+            maxAmount = result.getNumber(resultId, "MaxAmount"),
+            experience = result.getNumber(resultId, "Experience")
         }
         table.insert(fullList, task)
     until not result.next(resultId)
     result.free(resultId)
 
-    -- Cache speichern
     taskDefinitionsCache = fullList
     taskCacheExpiry = now + CACHE_DURATION
 
@@ -99,39 +99,8 @@ function TaskManager.sendAvailableTaskList(player)
     return true
 end
 
-function TaskManager.sendAvailableTaskListDirect(player)
-    if not player then
-        return false
-    end
-
-    local fullList = TaskManager.getAllTaskMonsters()
-
-    local compactList = {}
-    for _, task in ipairs(fullList) do
-        table.insert(compactList, {
-            id = task.id,
-            taskName = task.taskName,
-            lookTypeIds = task.lookTypeIds,
-            category = task.category,
-            maxAmount = task.maxAmount
-        })
-    end
-
-    local payload = json.encode(compactList)
-    print("[TaskManager] Payload size: " .. #payload .. " bytes")
-
-    if #payload > 65000 then
-        print("[TaskManager] Payload too large, using chunked method")
-        return TaskManager.sendAvailableTaskList(player)
-    else
-        player:sendExtendedOpcode(4, "TASKLIST_COMPLETE;" .. payload)
-        print("[TaskManager] All tasks sent directly - Total: " .. #fullList)
-        return true
-    end
-end
-
 function TaskManager.checkPlayerHasActiveTask(player)
-    local resultId = db.storeQuery(string.format("SELECT Id FROM PlayerTasks WHERE PlayerId = %d AND Paused = 0 AND Active = 1", player:getGuid()))
+    local resultId = db.storeQuery(string.format("SELECT Id FROM PlayerTasks WHERE PlayerId = %d AND Finished = 0 AND Paused = 0 AND Active = 1", player:getGuid()))
 
     if resultId ~= false then
         player:sendTextMessage(MESSAGE_STATUS_WARNING, "Start task failed. You already have an active task.")
@@ -154,7 +123,16 @@ function TaskManager.startTask(player, taskId, amount)
         return false
     end
 
-    TaskManager.checkPlayerHasActiveTask(player)
+    local hasActiveTask = TaskManager.checkPlayerHasActiveTask(player)
+
+    if hasActiveTask then
+        return false
+    end
+
+    if amount < 50 or amount > 1000 then
+        player:sendTextMessage(MESSAGE_STATUS_WARNING, "Task amount must be between 50 and 1000.")
+        return false
+    end
 
     local success = db.query(string.format(
             "INSERT INTO PlayerTasks (PlayerId, TaskId, Amount, Progress, Paused, Finished, Active, StartTime, EndTime) VALUES (%d, %d, %d, 0, 0, 0, 1, NOW(), NULL)",
