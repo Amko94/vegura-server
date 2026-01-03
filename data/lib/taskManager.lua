@@ -189,13 +189,19 @@ function TaskManager.claimReward(playerTaskId, rewardType, player)
     player:addMoney(gold)
     player:addExperience(exp, true)
 
+    local rewardTypeMap = {
+        gold = 1,
+        exp = 2,
+        split = 3
+    }
+
     db.query(string.format("UPDATE Players SET TaskPoints = TaskPoints + %d WHERE id = %d", points, player:getGuid()))
 
     db.query(string.format(
             "INSERT INTO playertaskhistories (PlayerId, TaskId, RewardType, Gold, Experience, TaskPoints, KillsCompleted, CreatedAt) VALUES (%d, %d, '%s', %d, %d, %d, %d, NOW())",
             player:getGuid(),
             reward.taskId,
-            rewardType,
+            rewardTypeMap[rewardType],
             gold,
             exp,
             points,

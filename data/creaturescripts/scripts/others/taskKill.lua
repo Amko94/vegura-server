@@ -10,7 +10,6 @@ function onKill(creature, target)
 
     local activeTasks = TaskManager.getActiveTasks(player)
     if #activeTasks == 0 then
-        print("[TASK DEBUG] Keine aktiven Tasks für Spieler:", player:getName())
         return true
     end
 
@@ -22,7 +21,6 @@ function onKill(creature, target)
 
     for _, activeTask in ipairs(activeTasks) do
         if activeTask.paused == 1 then
-            print("[TASK DEBUG] Task ist pausiert, überspringen")
             goto continue
         end
 
