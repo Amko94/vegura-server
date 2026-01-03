@@ -75,6 +75,13 @@ function TaskManager.sendAvailableTaskList(player)
     end
 
     local fullList = TaskManager.getAllTaskMonsters()
+    local taskPoints = TaskManager.getPlayerTaskPoints(player)
+
+    if taskPoints then
+        player:sendExtendedOpcode(12, taskPoints)
+    end
+
+    print(taskPoints, 'TASKPOINTS')
 
     local CHUNK_SIZE = 25
 
@@ -500,6 +507,18 @@ function TaskManager.updateMaxAmount(player, taskId)
     TaskManager.sendTasksToClient(player)
 
     return true
+end
+
+function TaskManager.getPlayerTaskPoints(player)
+    local resultId = db.storeQuery(string.format("SELECT TaskPoints FROM Players WHERE id = %d", player:getGuid()))
+    if not resultId then
+        return 0
+    end
+
+    local points = result.getNumber(resultId, "TaskPoints") or 0
+    result.free(resultId)
+
+    return points
 end
 
 function TaskManager.calculateTaskPointsReward(amount, experience, category)

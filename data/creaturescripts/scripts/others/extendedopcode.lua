@@ -10,6 +10,7 @@ EXTENDED_OPCODES = {
     CONFIRM_CLAIM_REWARD = 9,
     CLAIM_REWARD_SUCCESS = 10,
     PAUSE_TASK_SUCCESS = 11,
+    SEND_PLAYER_TASK_POINTS = 12
 }
 
 EXTENDED_ERROR_OPCODES = {
@@ -107,16 +108,19 @@ function onExtendedOpcode(player, opcode, buffer)
 
         if not taskId then
             print('invalid taskId received', taskId)
+            return true
         end
 
         if not rewardType then
             print('invalid rewardType received', rewardType)
+            return true
         end
 
         TaskManager.claimReward(taskId, rewardType, player)
 
     else
         print("[ExtendedOpcode] Unknown opcode:", opcode)
+        return true
     end
 
     return true
