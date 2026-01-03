@@ -5,15 +5,19 @@ EXTENDED_OPCODES = {
     REQUEST_TASK_LIST = 4,
     RESUME_TASK = 5,
     PAUSE_TASK = 6,
-    CANCEL_TASK = 7
+    CANCEL_TASK = 7,
+    TASK_REWARD_REQUEST = 8,
+    CONFIRM_CLAIM_REWARD = 9,
+    CLAIM_REWARD_SUCCESS = 10,
+    PAUSE_TASK_SUCCESS = 11,
 }
 
 EXTENDED_ERROR_OPCODES = {
-    RESUME_ERROR = 101
+    RESUME_ERROR = 101,
+    CLAIM_REWARD_ERROR_NO_FINISHED = 102,
 }
 
 function onExtendedOpcode(player, opcode, buffer)
-    print("[ExtendedOpcode] EINGANG: Player:", player and player:getName() or "NONE", "Opcode:", opcode, "Buffer:", buffer)
 
     if opcode == EXTENDED_OPCODES.START_TASK then
         local split = buffer:split(";")
@@ -85,6 +89,31 @@ function onExtendedOpcode(player, opcode, buffer)
         else
             player:sendCancelMessage("Failed to cancel task.")
         end
+    elseif opcode == EXTENDED_OPCODES.TASK_REWARD_REQUEST then
+
+        local taskId = tonumber(buffer)
+        print(taskId, '<-- TASK ID')
+        if not taskId then
+            player:sendCancelMessage("Invalid task data received.")
+            return true
+        end
+
+        TaskManager.taskRewardRequest(taskId, player)
+
+    elseif opcode == EXTENDED_OPCODES.CONFIRM_CLAIM_REWARD then
+        local split = buffer:split(";")
+        local taskId = tonumber(split[1])
+        local rewardType = split[2]
+
+        if not taskId then
+            print('invalid taskId received', taskId)
+        end
+
+        if not rewardType then
+            print('invalid rewardType received', rewardType)
+        end
+
+        TaskManager.claimReward(taskId, rewardType, player)
 
     else
         print("[ExtendedOpcode] Unknown opcode:", opcode)

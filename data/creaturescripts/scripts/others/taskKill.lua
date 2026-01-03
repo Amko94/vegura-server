@@ -48,10 +48,12 @@ function onKill(creature, target)
 
             player:sendExtendedOpcode(1, "TASK_UPDATED;" .. activeTask.taskId .. ";" .. newProgress .. ";" .. activeTask.amount)
 
-            if newProgress >= activeTask.amount then
+            if newProgress == activeTask.amount then
                 player:sendTextMessage(MESSAGE_EVENT_ADVANCE, "You have completed the task! Claim your reward!")
                 TaskManager.updateMaxAmount(player, activeTask.taskId)
-            else
+            end
+
+            if newProgress <= activeTask.mount then
                 sendProgressMessage(taskDef.taskName, remaining)
             end
 

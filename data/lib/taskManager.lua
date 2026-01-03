@@ -30,7 +30,6 @@ function TaskManager.getAllTaskMonsters()
             monsterNames = monsterNames,
             lookTypeIds = lookTypeIds,
             category = result.getNumber(resultId, "Category"),
-            maxAmount = result.getNumber(resultId, "MaxAmount"),
             experience = result.getNumber(resultId, "Experience")
         }
         table.insert(fullList, task)
@@ -100,13 +99,146 @@ function TaskManager.sendAvailableTaskList(player)
 end
 
 function TaskManager.checkPlayerHasActiveTask(player)
-    local resultId = db.storeQuery(string.format("SELECT Id FROM PlayerTasks WHERE PlayerId = %d AND Finished = 0 AND Paused = 0 AND Active = 1", player:getGuid()))
+    local resultId = db.storeQuery(string.format("SELECT Id FROM PlayerTasks WHERE PlayerId = %d AND Paused = 0 AND Active = 1", player:getGuid()))
 
     if resultId ~= false then
         player:sendTextMessage(MESSAGE_STATUS_WARNING, "Start task failed. You already have an active task.")
         result.free(resultId)
         return true
     end
+end
+
+function TaskManager.getPlayerTaskById(playerTaskId)
+    local resultId = db.storeQuery(string.format(
+            "SELECT * FROM PlayerTasks WHERE Id = %d",
+            playerTaskId
+    ))
+
+    if not resultId then
+        print('ERROR, NO task found', playerTaskId)
+        result.free(resultId)
+        return false
+    end
+
+    local gold = result.getNumber(resultId, "Reward_Gold")
+    local exp = result.getNumber(resultId, "Reward_Experience")
+    local points = result.getNumber(resultId, "Reward_TaskPoints")
+    local finished = result.getNumber(resultId, "Finished")
+    local taskId = result.getNumber(resultId, "TaskId")
+    local amount = result.getNumber(resultId, "Amount")
+
+    result.free(resultId)
+
+    return {
+        gold = gold,
+        exp = exp,
+        points = points,
+        finished = finished,
+        taskId = taskId,
+        amount = amount
+    }
+end
+
+function TaskManager.claimReward(playerTaskId, rewardType, player)
+    if not playerTaskId then
+        print('Error no Taskid')
+        return false
+    end
+
+    local hasPz = TaskManager.blockPz(player)
+
+    if hasPz then
+        return false
+    end
+
+    local reward = TaskManager.getPlayerTaskById(playerTaskId)
+
+    if not reward then
+        player:sendExtendedOpcode(EXTENDED_ERROR_OPCODES.CLAIM_REWARD_ERROR_NOT_FOUND)
+        return false
+    end
+
+    if reward.finished == 0 then
+        player:sendExtendedOpcode(EXTENDED_ERROR_OPCODES.CLAIM_REWARD_ERROR_NO_FINISHED)
+        player:sendTextMessage(MESSAGE_STATUS_WARNING, "Your task is not finished yet")
+        return false
+    end
+
+    local gold = 0
+    local exp = 0
+    local points = reward.points
+
+    if rewardType == "gold" then
+        gold = reward.gold
+        exp = 0
+    elseif rewardType == "exp" then
+        gold = 0
+        exp = reward.exp
+    elseif rewardType == "split" then
+        gold = math.floor(reward.gold / 2)
+        exp = math.floor(reward.exp / 2)
+    end
+
+    player:addMoney(gold)
+    player:addExperience(exp, true)
+
+    db.query(string.format("UPDATE Players SET TaskPoints = TaskPoints + %d WHERE id = %d", points, player:getGuid()))
+
+    db.query(string.format(
+            "INSERT INTO playertaskhistories (PlayerId, TaskId, RewardType, Gold, Experience, TaskPoints, KillsCompleted, CreatedAt) VALUES (%d, %d, '%s', %d, %d, %d, %d, NOW())",
+            player:getGuid(),
+            reward.taskId,
+            rewardType,
+            gold,
+            exp,
+            points,
+            reward.amount
+    ))
+
+    db.query(string.format("DELETE FROM PlayerTasks WHERE Id = %d", playerTaskId))
+
+    local message = "You received: "
+    if rewardType == "gold" then
+        message = message .. gold .. " gold coins"
+    elseif rewardType == "exp" then
+        message = message .. exp .. " experience"
+    elseif rewardType == "split" then
+        message = message .. gold .. " gold coins and " .. exp .. " experience"
+    end
+    message = message .. " and " .. points .. " task points"
+
+    player:sendTextMessage(MESSAGE_EVENT_ADVANCE, message)
+    player:sendExtendedOpcode(EXTENDED_OPCODES.CLAIM_REWARD_SUCCESS)
+    TaskManager.sendTasksToClient(player)
+
+    return true
+end
+
+function TaskManager.taskRewardRequest(playerTaskId, player)
+    if not playerTaskId then
+        print('Error no Taskid')
+        return false
+    end
+
+    local reward = TaskManager.getPlayerTaskById(playerTaskId)
+
+    if not reward then
+        print('ERROR: Could not get reward for task', playerTaskId)
+        return false
+    end
+
+    local rewardData = string.format("%d;%d;%d", reward.gold, reward.exp, reward.points)
+    player:sendExtendedOpcode(EXTENDED_OPCODES.TASK_REWARD_REQUEST, rewardData)
+
+    return true
+end
+
+function TaskManager.blockPz(player)
+    if player:isPzLocked() or player:getCondition(CONDITION_INFIGHT, CONDITIONID_DEFAULT) then
+        return true
+    end
+
+    return false
 end
 
 function TaskManager.startTask(player, taskId, amount)
@@ -123,6 +255,12 @@ function TaskManager.startTask(player, taskId, amount)
         return false
     end
 
+    local hasPz = TaskManager.blockPz(player)
+
+    if hasPz then
+        return false
+    end
+
     local hasActiveTask = TaskManager.checkPlayerHasActiveTask(player)
 
     if hasActiveTask then
@@ -134,11 +272,26 @@ function TaskManager.startTask(player, taskId, amount)
         return false
     end
 
+    local taskDef = TaskManager.getTaskDefinitionById(taskId)
+
+    if not taskDef then
+        print("[TaskManager] ERROR: Task definition not found for ID:", taskId)
+        player:sendTextMessage(MESSAGE_STATUS_WARNING, "Task not found!")
+        return false
+    end
+
+    local totalGold = TaskManager.calculateGoldReward(amount, taskDef.experience, taskDef.category)
+    local totalExp = TaskManager.calculateExperienceReward(amount, taskDef.experience)
+    local totalTaskPoints = TaskManager.calculateTaskPointsReward(amount, taskDef.experience, taskDef.category)
+
     local success = db.query(string.format(
-            "INSERT INTO PlayerTasks (PlayerId, TaskId, Amount, Progress, Paused, Finished, Active, StartTime, EndTime) VALUES (%d, %d, %d, 0, 0, 0, 1, NOW(), NULL)",
+            "INSERT INTO PlayerTasks (PlayerId, TaskId, Amount, Progress, Paused, Finished, Active, StartTime, EndTime, Reward_Experience, Reward_Gold, Reward_TaskPoints) VALUES (%d, %d, %d, 0, 0, 0, 1, NOW(), NULL, %d, %d, %d)",
             player:getGuid(),
             taskId,
-            amount
+            amount,
+            totalExp,
+            totalGold,
+            totalTaskPoints
     ))
 
     if success then
@@ -182,22 +335,41 @@ function TaskManager.pauseTask(player, taskId)
         return false
     end
 
+    local hasPz = TaskManager.blockPz(player)
+
+    if hasPz then
+        return false
+    end
+
     local resultId = db.storeQuery(string.format(
-            "SELECT Id FROM PlayerTasks WHERE PlayerId = %d AND TaskId = %d AND Finished = 0 AND Paused = 0",
+            "SELECT Id, Finished FROM PlayerTasks WHERE PlayerId = %d AND TaskId = %d AND Active = 1 AND Paused = 0",
             player:getGuid(), taskId))
     if not resultId then
         return false
     end
 
     local playerTaskId = result.getNumber(resultId, "Id")
+    local finished = result.getNumber(resultId, "Finished")
     result.free(resultId)
 
+    if finished == 1 then
+        player:sendTextMessage(MESSAGE_STATUS_WARNING, "You cannot paused a completed task.")
+        return false
+    end
+
     db.query(string.format("UPDATE PlayerTasks SET Paused = 1 WHERE Id = %d", playerTaskId))
+    player:sendExtendedOpcode(EXTENDED_OPCODES.PAUSE_TASK_SUCCESS)
     return true
 end
 
 function TaskManager.resumeTask(player, taskId)
     if not player or not taskId then
+        return false
+    end
+
+    local hasPz = TaskManager.blockPz(player)
+
+    if hasPz then
         return false
     end
 
@@ -228,6 +400,12 @@ function TaskManager.cancelTask(player, taskId)
         return false
     end
 
+    local hasPz = TaskManager.blockPz(player)
+
+    if hasPz then
+        return false
+    end
+
     local success = db.query(string.format(
             "DELETE FROM PlayerTasks WHERE PlayerId = %d AND TaskId = %d",
             player:getGuid(), taskId))
@@ -240,7 +418,7 @@ function TaskManager.getActiveTasks(player)
         return {}
     end
 
-    local resultId = db.storeQuery(string.format("SELECT * FROM PlayerTasks WHERE PlayerId = %d AND Finished = 0", player:getGuid()))
+    local resultId = db.storeQuery(string.format("SELECT * FROM PlayerTasks WHERE PlayerId = %d AND Active = 1", player:getGuid()))
     if not resultId then
         return {}
     end
@@ -254,6 +432,7 @@ function TaskManager.getActiveTasks(player)
             progress = result.getNumber(resultId, "Progress"),
             paused = result.getNumber(resultId, "Paused"),
             active = result.getNumber(resultId, "Active"),
+            finished = result.getNumber(resultId, "Finished"),
             startTime = result.getString(resultId, "StartTime"),
             endTime = result.getString(resultId, "EndTime")
         })
@@ -289,7 +468,8 @@ function TaskManager.getTaskDefinitionById(taskId)
         monsterNames = parseJsonArray(result.getString(resultId, "MonsterNames"), true),
         lookTypeIds = parseJsonArray(result.getString(resultId, "LookTypeIds"), false),
         category = result.getNumber(resultId, "Category"),
-        maxAmount = result.getNumber(resultId, "MaxAmount")
+        maxAmount = result.getNumber(resultId, "MaxAmount"),
+        experience = result.getNumber(resultId, "Experience")
     }
 
     result.free(resultId)
@@ -321,3 +501,56 @@ function TaskManager.updateMaxAmount(player, taskId)
 
     return true
 end
+
+function TaskManager.calculateTaskPointsReward(amount, experience, category)
+    if amount > 1000 then
+        amount = 1000
+    end
+
+    local categoryMultiplier = 1
+
+    if category == 1 then
+        categoryMultiplier = 0.1
+    elseif category == 2 then
+        categoryMultiplier = 0.5
+    elseif category == 3 then
+        categoryMultiplier = 1
+    elseif category == 4 then
+        categoryMultiplier = 1.5
+    end
+
+    local basePointsPerKill = (experience / 10000) * categoryMultiplier
+
+    local totalTP = math.floor(basePointsPerKill * amount)
+
+    totalTP = math.floor(totalTP / 2)
+
+    return totalTP
+end
+
+function TaskManager.calculateGoldReward(amount, experience, category)
+
+    if amount > 1000 then
+        amount = 1000
+    end
+    local baseRewardPerKill = experience / 5
+
+    if category >= 3 then
+        baseRewardPerKill = baseRewardPerKill / 3
+    end
+
+    local totalGold = math.floor(baseRewardPerKill * amount)
+
+    return totalGold
+end
+
+function TaskManager.calculateExperienceReward(amount, experience)
+    if amount > 1000 then
+        amount = 1000
+    end
+
+    local totalExp = math.floor(amount * experience * 0.55)
+
+    return totalExp
+end
+
