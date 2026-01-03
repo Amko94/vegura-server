@@ -53,7 +53,7 @@ function onKill(creature, target)
                 TaskManager.updateMaxAmount(player, activeTask.taskId)
             end
 
-            if newProgress <= activeTask.mount then
+            if newProgress <= activeTask.amount then
                 sendProgressMessage(taskDef.taskName, remaining)
             end
 
