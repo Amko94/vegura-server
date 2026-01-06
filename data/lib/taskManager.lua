@@ -1,16 +1,8 @@
 TaskManager = {}
 
-local taskDefinitionsCache = nil
-local taskCacheExpiry = 0
 local CACHE_DURATION = 300000
 
 function TaskManager.getAllTaskMonsters()
-    local now = os.time() * 1000
-
-    if taskDefinitionsCache and now < taskCacheExpiry then
-        return taskDefinitionsCache
-    end
-
     local resultId = db.storeQuery("SELECT * FROM TaskDefinitions")
     if not resultId then
         return {}
@@ -35,9 +27,6 @@ function TaskManager.getAllTaskMonsters()
         table.insert(fullList, task)
     until not result.next(resultId)
     result.free(resultId)
-
-    taskDefinitionsCache = fullList
-    taskCacheExpiry = now + CACHE_DURATION
 
     return fullList
 end
@@ -74,11 +63,12 @@ function TaskManager.sendAvailableTaskList(player)
         return false
     end
 
+    local playerId = player:getGuid()
     local fullList = TaskManager.getAllTaskMonsters()
     local taskPoints = TaskManager.getPlayerTaskPoints(player)
 
     if taskPoints then
-        player:sendExtendedOpcode(12, taskPoints)
+        player:sendExtendedOpcode(EXTENDED_OPCODES.SEND_PLAYER_TASK_POINTS, playerId .. ";" .. taskPoints)
     end
 
     print(taskPoints, 'TASKPOINTS')
@@ -101,6 +91,8 @@ function TaskManager.sendAvailableTaskList(player)
 
     player:sendExtendedOpcode(4, "TASKLIST_COMPLETE")
     print("[TaskManager] All tasks sent - Total: " .. #fullList)
+
+    TaskManager.sendTasksToClient(player)
 
     return true
 end
@@ -309,6 +301,7 @@ function TaskManager.startTask(player, taskId, amount)
 
     if success then
         print("[TaskManager] Task started with TaskId:", taskId)
+        TaskManager.sendTasksToClient(player)
         return true
     else
         print("[TaskManager] ERROR: Failed to insert task!")
@@ -340,6 +333,8 @@ function TaskManager.updateTaskProgress(player, taskId, kills)
     else
         db.query(string.format("UPDATE PlayerTasks SET Progress = %d WHERE Id = %d", newProgress, playerTaskId))
     end
+
+    TaskManager.sendTasksToClient(player)
     return true
 end
 
@@ -372,6 +367,7 @@ function TaskManager.pauseTask(player, taskId)
 
     db.query(string.format("UPDATE PlayerTasks SET Paused = 1 WHERE Id = %d", playerTaskId))
     player:sendExtendedOpcode(EXTENDED_OPCODES.PAUSE_TASK_SUCCESS)
+    TaskManager.sendTasksToClient(player)
     return true
 end
 
@@ -405,6 +401,7 @@ function TaskManager.resumeTask(player, taskId)
 
     db.query(string.format("UPDATE PlayerTasks SET Paused = 0 WHERE Id = %d", playerTaskId))
     player:sendExtendedOpcode(EXTENDED_OPCODES.RESUME_TASK)
+    TaskManager.sendTasksToClient(player)
     return true
 end
 
@@ -422,6 +419,10 @@ function TaskManager.cancelTask(player, taskId)
     local success = db.query(string.format(
             "DELETE FROM PlayerTasks WHERE PlayerId = %d AND TaskId = %d",
             player:getGuid(), taskId))
+
+    if success then
+        TaskManager.sendTasksToClient(player)
+    end
 
     return success
 end
@@ -500,8 +501,9 @@ function TaskManager.sendTasksToClient(player)
         table.insert(array, task)
     end
 
+    local playerId = player:getGuid()
     local jsonString = json.encode(array)
-    player:sendExtendedOpcode(EXTENDED_OPCODES.SEND_TASKS, jsonString)
+    player:sendExtendedOpcode(EXTENDED_OPCODES.SEND_TASKS, playerId .. ";" .. jsonString)
 end
 
 function TaskManager.updateMaxAmount(player, taskId)
@@ -510,7 +512,6 @@ function TaskManager.updateMaxAmount(player, taskId)
     end
 
     TaskManager.sendAvailableTaskList(player)
-    TaskManager.sendTasksToClient(player)
 
     return true
 end
@@ -578,4 +579,3 @@ function TaskManager.calculateExperienceReward(amount, experience)
 
     return totalExp
 end
-

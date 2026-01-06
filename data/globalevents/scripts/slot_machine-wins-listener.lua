@@ -1,5 +1,4 @@
--- slot_machine‑wins-listener.lua
--- prüft offene Gewinne, bucht Geld + Spezial‑Item (Boots of Haste 2195)
+
 
 local QUERY_WINS = [[
 SELECT  `Id`, `PlayerId`, `Amount`, `SpecialWin`
