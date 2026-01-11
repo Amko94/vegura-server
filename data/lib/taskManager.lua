@@ -71,11 +71,7 @@ function TaskManager.sendAvailableTaskList(player)
         player:sendExtendedOpcode(TASK_MANAGER_EXTENDED_OPCODES.SEND_PLAYER_TASK_POINTS, playerId .. ";" .. taskPoints)
     end
 
-    print(taskPoints, 'TASKPOINTS')
-
     local CHUNK_SIZE = 25
-
-    local totalChunks = math.ceil(#fullList / CHUNK_SIZE)
 
     for i = 1, #fullList, CHUNK_SIZE do
         local chunk = {}
@@ -86,11 +82,9 @@ function TaskManager.sendAvailableTaskList(player)
         local payload = json.encode(chunk)
         player:sendExtendedOpcode(4, "TASKLIST_PART;" .. payload)
 
-        print("[TaskManager] Chunk " .. math.ceil(i / CHUNK_SIZE) .. "/" .. totalChunks .. " sent (" .. #chunk .. " tasks)")
     end
 
     player:sendExtendedOpcode(4, "TASKLIST_COMPLETE")
-    print("[TaskManager] All tasks sent - Total: " .. #fullList)
 
     TaskManager.sendTasksToClient(player)
 
