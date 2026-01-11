@@ -234,12 +234,12 @@
 /* #undef HAVE_ASAN */
 #define ENABLED_LOCAL_INFILE 1
 /* #undef OPTIMIZER_TRACE */
-#define DEFAULT_MYSQL_HOME "C:/Program Files/MySQL/MySQL Server 6.1"
+#define DEFAULT_MYSQL_HOME "C:/Program Files/MySQL/MySQL Server 8.4"
 #define SHAREDIR "share"
-#define DEFAULT_BASEDIR "C:/Program Files/MySQL/MySQL Server 6.1"
-#define MYSQL_DATADIR "C:/Program Files/MySQL/MySQL Server 6.1/data"
-#define DEFAULT_CHARSET_HOME "C:/Program Files/MySQL/MySQL Server 6.1"
-#define PLUGINDIR "C:/Program Files/MySQL/MySQL Server 6.1/lib/plugin"
+#define DEFAULT_BASEDIR "C:/Program Files/MySQL/MySQL Server 8.4"
+#define MYSQL_DATADIR "C:/Program Files/MySQL/MySQL Server 8.4/data"
+#define DEFAULT_CHARSET_HOME "C:/Program Files/MySQL/MySQL Server 8.4"
+#define PLUGINDIR "C:/Program Files/MySQL/MySQL Server 8.4/lib/plugin"
 /* #undef DEFAULT_SYSCONFDIR */
 #define DEFAULT_TMPDIR P_tmpdir
 #define INSTALL_SBINDIR "/bin"

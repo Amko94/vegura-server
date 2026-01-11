@@ -22,224 +22,231 @@
 
 #include <boost/lexical_cast.hpp>
 
-#include <mysql/mysql.h>
+#include <mysql.h>
 
 class DBResult;
 typedef std::shared_ptr<DBResult> DBResult_ptr;
 
-class Database
-{
-	public:
-		Database();
-		~Database();
+class Database {
+public:
+    Database();
 
-		// non-copyable
-		Database(const Database&) = delete;
-		Database& operator=(const Database&) = delete;
+    ~Database();
 
-		/**
-		 * Singleton implementation.
-		 *
-		 * @return database connection handler singleton
-		 */
-		static Database* getInstance()
-		{
-			static Database instance;
-			return &instance;
-		}
+    // non-copyable
+    Database(const Database &) = delete;
 
-		/**
-		 * Connects to the database
-		 *
-		 * @return true on successful connection, false on error
-		 */
-		bool connect();
+    Database &operator=(const Database &) = delete;
 
-		/**
-		 * Executes command.
-		 *
-		 * Executes query which doesn't generates results (eg. INSERT, UPDATE, DELETE...).
-		 *
-		 * @param query command
-		 * @return true on success, false on error
-		 */
-		bool executeQuery(const std::string& query);
+    /**
+     * Singleton implementation.
+     *
+     * @return database connection handler singleton
+     */
+    static Database *getInstance() {
+        static Database instance;
+        return &instance;
+    }
 
-		/**
-		 * Queries database.
-		 *
-		 * Executes query which generates results (mostly SELECT).
-		 *
-		 * @return results object (nullptr on error)
-		 */
-		DBResult_ptr storeQuery(const std::string& query);
+    /**
+     * Connects to the database
+     *
+     * @return true on successful connection, false on error
+     */
+    bool connect();
 
-		/**
-		 * Escapes string for query.
-		 *
-		 * Prepares string to fit SQL queries including quoting it.
-		 *
-		 * @param s string to be escaped
-		 * @return quoted string
-		 */
-		std::string escapeString(const std::string& s) const;
+    /**
+     * Executes command.
+     *
+     * Executes query which doesn't generates results (eg. INSERT, UPDATE, DELETE...).
+     *
+     * @param query command
+     * @return true on success, false on error
+     */
+    bool executeQuery(const std::string &query);
 
-		/**
-		 * Escapes binary stream for query.
-		 *
-		 * Prepares binary stream to fit SQL queries.
-		 *
-		 * @param s binary stream
-		 * @param length stream length
-		 * @return quoted string
-		 */
-		std::string escapeBlob(const char* s, uint32_t length) const;
+    /**
+     * Queries database.
+     *
+     * Executes query which generates results (mostly SELECT).
+     *
+     * @return results object (nullptr on error)
+     */
+    DBResult_ptr storeQuery(const std::string &query);
 
-		/**
-		 * Retrieve id of last inserted row
-		 *
-		 * @return id on success, 0 if last query did not result on any rows with auto_increment keys
-		 */
-		uint64_t getLastInsertId() const {
-			return static_cast<uint64_t>(mysql_insert_id(handle));
-		}
+    /**
+     * Escapes string for query.
+     *
+     * Prepares string to fit SQL queries including quoting it.
+     *
+     * @param s string to be escaped
+     * @return quoted string
+     */
+    std::string escapeString(const std::string &s) const;
 
-		/**
-		 * Get database engine version
-		 *
-		 * @return the database engine version
-		 */
-		static const char* getClientVersion() {
-			return mysql_get_client_info();
-		}
+    /**
+     * Escapes binary stream for query.
+     *
+     * Prepares binary stream to fit SQL queries.
+     *
+     * @param s binary stream
+     * @param length stream length
+     * @return quoted string
+     */
+    std::string escapeBlob(const char *s, uint32_t length) const;
 
-		uint64_t getMaxPacketSize() const {
-			return maxPacketSize;
-		}
+    /**
+     * Retrieve id of last inserted row
+     *
+     * @return id on success, 0 if last query did not result on any rows with auto_increment keys
+     */
+    uint64_t getLastInsertId() const {
+        return static_cast<uint64_t>(mysql_insert_id(handle));
+    }
 
-	protected:
-		/**
-		 * Transaction related methods.
-		 *
-		 * Methods for starting, commiting and rolling back transaction. Each of the returns boolean value.
-		 *
-		 * @return true on success, false on error
-		 */
-		bool beginTransaction();
-		bool rollback();
-		bool commit();
+    /**
+     * Get database engine version
+     *
+     * @return the database engine version
+     */
+    static const char *getClientVersion() {
+        return mysql_get_client_info();
+    }
 
-	private:
-		MYSQL* handle;
-		std::recursive_mutex databaseLock;
-		uint64_t maxPacketSize;
+    uint64_t getMaxPacketSize() const {
+        return maxPacketSize;
+    }
 
-	friend class DBTransaction;
+protected:
+    /**
+     * Transaction related methods.
+     *
+     * Methods for starting, commiting and rolling back transaction. Each of the returns boolean value.
+     *
+     * @return true on success, false on error
+     */
+    bool beginTransaction();
+
+    bool rollback();
+
+    bool commit();
+
+private:
+    MYSQL *handle;
+    std::recursive_mutex databaseLock;
+    uint64_t maxPacketSize;
+
+    friend class DBTransaction;
 };
 
-class DBResult
-{
-	public:
-		explicit DBResult(MYSQL_RES* res);
-		~DBResult();
+class DBResult {
+public:
+    explicit DBResult(MYSQL_RES *res);
 
-		// non-copyable
-		DBResult(const DBResult&) = delete;
-		DBResult& operator=(const DBResult&) = delete;
+    ~DBResult();
 
-		template<typename T>
-		T getNumber(const std::string& s) const
-		{
-			auto it = listNames.find(s);
-			if (it == listNames.end()) {
-				std::cout << "[Error - DBResult::getNumber] Column '" << s << "' doesn't exist in the result set" << std::endl;
-				return static_cast<T>(0);
-			}
+    // non-copyable
+    DBResult(const DBResult &) = delete;
 
-			if (row[it->second] == nullptr) {
-				return static_cast<T>(0);
-			}
+    DBResult &operator=(const DBResult &) = delete;
 
-			T data;
-			try {
-				data = boost::lexical_cast<T>(row[it->second]);
-			} catch (boost::bad_lexical_cast&) {
-				data = 0;
-			}
-			return data;
-		}
+    template<typename T>
+    T getNumber(const std::string &s) const {
+        auto it = listNames.find(s);
+        if (it == listNames.end()) {
+            std::cout << "[Error - DBResult::getNumber] Column '" << s << "' doesn't exist in the result set" <<
+                    std::endl;
+            return static_cast<T>(0);
+        }
 
-		std::string getString(const std::string& s) const;
-		const char* getStream(const std::string& s, unsigned long& size) const;
+        if (row[it->second] == nullptr) {
+            return static_cast<T>(0);
+        }
 
-		bool hasNext() const;
-		bool next();
+        T data;
+        try {
+            data = boost::lexical_cast<T>(row[it->second]);
+        } catch (boost::bad_lexical_cast &) {
+            data = 0;
+        }
+        return data;
+    }
 
-	private:
-		MYSQL_RES* handle;
-		MYSQL_ROW row;
+    std::string getString(const std::string &s) const;
 
-		std::map<std::string, size_t> listNames;
+    const char *getStream(const std::string &s, unsigned long &size) const;
 
-	friend class Database;
+    bool hasNext() const;
+
+    bool next();
+
+private:
+    MYSQL_RES *handle;
+    MYSQL_ROW row;
+
+    std::map<std::string, size_t> listNames;
+
+    friend class Database;
 };
 
 /**
  * INSERT statement.
  */
-class DBInsert
-{
-	public:
-		explicit DBInsert(std::string query);
-		bool addRow(const std::string& row);
-		bool addRow(std::ostringstream& row);
-		bool execute();
+class DBInsert {
+public:
+    explicit DBInsert(std::string query);
 
-	protected:
-		std::string query;
-		std::string values;
-		size_t length;
+    bool addRow(const std::string &row);
+
+    bool addRow(std::ostringstream &row);
+
+    bool execute();
+
+protected:
+    std::string query;
+    std::string values;
+    size_t length;
 };
 
-class DBTransaction
-{
-	public:
-		DBTransaction() {
-			state = STATE_NO_START;
-		}
+class DBTransaction {
+public:
+    DBTransaction() {
+        state = STATE_NO_START;
+    }
 
-		~DBTransaction() {
-			if (state == STATE_START) {
-				Database::getInstance()->rollback();
-			}
-		}
+    ~DBTransaction() {
+        if (state == STATE_START) {
+            Database::getInstance()->rollback();
+        }
+    }
 
-		// non-copyable
-		DBTransaction(const DBTransaction&) = delete;
-		DBTransaction& operator=(const DBTransaction&) = delete;
+    // non-copyable
+    DBTransaction(const DBTransaction &) = delete;
 
-		bool begin() {
-			state = STATE_START;
-			return Database::getInstance()->beginTransaction();
-		}
+    DBTransaction &operator=(const DBTransaction &) = delete;
 
-		bool commit() {
-			if (state != STATE_START) {
-				return false;
-			}
+    bool begin() {
+        state = STATE_START;
+        return Database::getInstance()->beginTransaction();
+    }
 
-			state = STEATE_COMMIT;
-			return Database::getInstance()->commit();
-		}
+    bool commit() {
+        if (state != STATE_START) {
+            return false;
+        }
 
-	private:
-		enum TransactionStates_t {
-			STATE_NO_START,
-			STATE_START,
-			STEATE_COMMIT,
-		};
+        state = STEATE_COMMIT;
+        return Database::getInstance()->commit();
+    }
 
-		TransactionStates_t state;
+private:
+    enum TransactionStates_t {
+        STATE_NO_START,
+        STATE_START,
+        STEATE_COMMIT,
+    };
+
+    TransactionStates_t state;
 };
 
 #endif

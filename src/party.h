@@ -82,6 +82,7 @@ class Party
 
 		void updatePlayerTicks(Player* player, uint32_t points);
 		void clearPlayerPoints(Player* player);
+		uint8_t getSpellBoostLevel(const std::string& spellName);
 
 	protected:
 		bool canEnableSharedExperience();

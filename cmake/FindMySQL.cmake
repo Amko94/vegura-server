@@ -64,6 +64,7 @@ IF (WIN32)
 				 $ENV{MYSQL_DIR}/libmysql/${libsuffixBuild}
 				 $ENV{MYSQL_DIR}/client/${libsuffixBuild}
 				 $ENV{MYSQL_DIR}/libmysql/${libsuffixBuild}
+				"C:/Program Files/MySQL/MySQL Server 8.4/lib"
 				 $ENV{ProgramFiles}/MySQL/*/lib/${libsuffixDist}
 				 $ENV{SystemDrive}/MySQL/*/lib/${libsuffixDist})
 ELSE (WIN32)
