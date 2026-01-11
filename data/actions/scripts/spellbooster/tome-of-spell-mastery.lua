@@ -4,6 +4,17 @@ local CACHE_DURATION = 300000
 local spellCache = {}
 local cacheTime = 0
 
+local spellHideList = {
+    CREATURE_ILLUSION = 'Creature Illusion',
+    CURE_POISON = 'Cure Poison',
+    FIND_PERSON = 'Find Person',
+    GREAT_LIGHT = 'Great Light',
+    LIGHT = 'Light',
+    MAGIC_ROPE = 'Magic Rope',
+    ULTIMATE_HEALING = 'Ultimate Healing',
+    ULTIMATE_LIGHT = 'Ultimate Light',
+}
+
 local function loadSpellsFromXML()
     local now = os.time() * 1000
 
@@ -97,6 +108,15 @@ function getSpellsByVocation(vocName, player)
     return playerSpells
 end
 
+local function isInHideList(spellName, hideList)
+    for _, hiddenName in pairs(hideList) do
+        if spellName == hiddenName then
+            return true
+        end
+    end
+    return false
+end
+
 function onUse(player, item, fromPosition, target, toPosition, isHotkey)
     if not player then
         return false
@@ -110,14 +130,19 @@ function onUse(player, item, fromPosition, target, toPosition, isHotkey)
 
     local spells = getSpellsByVocation(vocName, player)
 
-    if #spells == 0 then
+    local filteredSpells = {}
+    for _, spell in ipairs(spells) do
+        if not isInHideList(spell.name, spellHideList) then
+            table.insert(filteredSpells, spell)
+        end
+    end
+
+    if #filteredSpells == 0 then
         player:sendCancelMessage("No spells found for your vocation!")
         return false
     end
 
-    player:getPosition():sendMagicEffect(CONST_ME_MAGIC_BLUE)
-
-    local jsonString = json.encode(spells)
+    local jsonString = json.encode(filteredSpells)
 
     player:sendExtendedOpcode(OPCODE_SPELL_BOOSTER_DIALOG, jsonString)
 

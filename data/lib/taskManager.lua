@@ -68,7 +68,7 @@ function TaskManager.sendAvailableTaskList(player)
     local taskPoints = TaskManager.getPlayerTaskPoints(player)
 
     if taskPoints then
-        player:sendExtendedOpcode(EXTENDED_OPCODES.SEND_PLAYER_TASK_POINTS, playerId .. ";" .. taskPoints)
+        player:sendExtendedOpcode(TASK_MANAGER_EXTENDED_OPCODES.SEND_PLAYER_TASK_POINTS, playerId .. ";" .. taskPoints)
     end
 
     print(taskPoints, 'TASKPOINTS')
@@ -213,7 +213,7 @@ function TaskManager.claimReward(playerTaskId, rewardType, player)
     message = message .. " and " .. points .. " task points"
 
     player:sendTextMessage(MESSAGE_EVENT_ADVANCE, message)
-    player:sendExtendedOpcode(EXTENDED_OPCODES.CLAIM_REWARD_SUCCESS)
+    player:sendExtendedOpcode(TASK_MANAGER_EXTENDED_OPCODES.CLAIM_REWARD_SUCCESS)
     TaskManager.sendTasksToClient(player)
 
     return true
@@ -233,7 +233,7 @@ function TaskManager.taskRewardRequest(playerTaskId, player)
     end
 
     local rewardData = string.format("%d;%d;%d", reward.gold, reward.exp, reward.points)
-    player:sendExtendedOpcode(EXTENDED_OPCODES.TASK_REWARD_REQUEST, rewardData)
+    player:sendExtendedOpcode(TASK_MANAGER_EXTENDED_OPCODES.TASK_REWARD_REQUEST, rewardData)
 
     return true
 end
@@ -366,7 +366,7 @@ function TaskManager.pauseTask(player, taskId)
     end
 
     db.query(string.format("UPDATE PlayerTasks SET Paused = 1 WHERE Id = %d", playerTaskId))
-    player:sendExtendedOpcode(EXTENDED_OPCODES.PAUSE_TASK_SUCCESS)
+    player:sendExtendedOpcode(TASK_MANAGER_EXTENDED_OPCODES.PAUSE_TASK_SUCCESS)
     TaskManager.sendTasksToClient(player)
     return true
 end
@@ -400,7 +400,7 @@ function TaskManager.resumeTask(player, taskId)
     result.free(resultId)
 
     db.query(string.format("UPDATE PlayerTasks SET Paused = 0 WHERE Id = %d", playerTaskId))
-    player:sendExtendedOpcode(EXTENDED_OPCODES.RESUME_TASK)
+    player:sendExtendedOpcode(TASK_MANAGER_EXTENDED_OPCODES.RESUME_TASK)
     TaskManager.sendTasksToClient(player)
     return true
 end
@@ -503,7 +503,7 @@ function TaskManager.sendTasksToClient(player)
 
     local playerId = player:getGuid()
     local jsonString = json.encode(array)
-    player:sendExtendedOpcode(EXTENDED_OPCODES.SEND_TASKS, playerId .. ";" .. jsonString)
+    player:sendExtendedOpcode(TASK_MANAGER_EXTENDED_OPCODES.SEND_TASKS, playerId .. ";" .. jsonString)
 end
 
 function TaskManager.updateMaxAmount(player, taskId)
