@@ -54,20 +54,23 @@ end
 
 function SpellBoostManager.getPlayerSpellLevel(spellName, player)
     local result = db.storeQuery(
-            "SELECT BoostLevel FROM PlayerSpellBoosts WHERE PlayerId = " .. player:getGuid() .. " AND SpellName = '" .. spellName .. "'"
+            "SELECT CurrentBoostLevel FROM PlayerSpellBoosts WHERE PlayerId = " .. player:getGuid() .. " AND SpellName = '" .. spellName .. "'"
     )
 
     if not result then
         return 0
     end
 
-    local boostLevel = result:getNumber("BoostLevel")
+    local boostLevel = result:getNumber("CurrentBoostLevel")
     result:free()
     return boostLevel
 end
 
 function SpellBoostManager.getSpellPrice(spellName, player)
     local normalizedName = spellName:lower():gsub(" ", "")
+
+    local testSpellLevel = player:getSpellLevelBySpellName('Energy Strike')
+    print('<<<<<<<<<<<----' .. testSpellLevel .. '----->>>>>>>>>>>>>>>>')
 
     local currentBoostLevel = SpellBoostManager.getPlayerSpellLevel(normalizedName, player)
 

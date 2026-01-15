@@ -68,7 +68,7 @@ local function loadSpellsFromXML()
 end
 
 function getSpellBoost(playerId, spellName)
-    local result = db.storeQuery("SELECT BoostLevel FROM PlayerSpellBoosts WHERE PlayerId = " .. playerId .. " AND SpellName = '" .. spellName .. "'")
+    local result = db.storeQuery("SELECT CurrentBoostLevel FROM PlayerSpellBoosts WHERE PlayerId = " .. playerId .. " AND SpellName = '" .. spellName .. "'")
     if result then
         local level = result:getNumber("BoostLevel") or 0
         result:free()
@@ -118,33 +118,46 @@ local function isInHideList(spellName, hideList)
 end
 
 function onUse(player, item, fromPosition, target, toPosition, isHotkey)
-    if not player then
-        return false
-    end
-
-    local vocName = player:getVocation():getName()
-    if not vocName then
-        player:sendCancelMessage("Error getting your vocation!")
-        return false
-    end
-
-    local spells = getSpellsByVocation(vocName, player)
-
-    local filteredSpells = {}
-    for _, spell in ipairs(spells) do
-        if not isInHideList(spell.name, spellHideList) then
-            table.insert(filteredSpells, spell)
-        end
-    end
-
-    if #filteredSpells == 0 then
-        player:sendCancelMessage("No spells found for your vocation!")
-        return false
-    end
-
-    local jsonString = json.encode(filteredSpells)
-
-    player:sendExtendedOpcode(OPCODE_SPELL_BOOSTER_DIALOG, jsonString)
+    --if not player then
+    --    return false
+    --end
+    --
+    --local allSpellBoosts = Game.getSpellList()
+    --if not allSpellBoosts or #allSpellBoosts == 0 then
+    --    player:sendCancelMessage("No spell boost definitions found in server cache!")
+    --    return false
+    --end
+    --
+    --local playerVocation = player:getVocation():getId()
+    --local filteredSpells = {}
+    --
+    --for _, def in ipairs(allSpellBoosts) do
+    --    local canUse = false
+    --
+    --    for _, vocId in ipairs(def.vocations) do
+    --        if vocId == playerVocation then
+    --            canUse = true
+    --            break
+    --        end
+    --    end
+    --
+    --    if canUse then
+    --
+    --        if not isInHideList(def.spellName, spellHideList) then
+    --            -- Wir fügen noch das aktuelle Boost-Level des Spielers hinzu
+    --            def.currentLevel = player:getSpellLevelBySpellName(def.spellName)
+    --            table.insert(filteredSpells, def)
+    --        end
+    --    end
+    --end
+    --
+    --if #filteredSpells == 0 then
+    --    player:sendCancelMessage("No spells found for your vocation!")
+    --    return false
+    --end
+    --
+    --local jsonString = json.encode(filteredSpells)
+    --player:sendExtendedOpcode(OPCODE_SPELL_BOOSTER_DIALOG, jsonString)
 
     return true
 end
