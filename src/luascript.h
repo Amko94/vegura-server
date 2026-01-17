@@ -454,7 +454,7 @@ protected:
     static bool getArea(lua_State *L, std::list<uint32_t> &list, uint32_t &rows);
 
     //vegura custom methods
-    // static int luaGameGetSpellBoostDefinitionList(lua_State *L);
+    static int luaGameGetSpellBoostDefinitionList(lua_State *L);
 
     static int luaPlayerGetSpellLevelByName(lua_State *L);
 

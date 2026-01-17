@@ -1794,7 +1794,7 @@ void LuaScriptInterface::registerFunctions() {
 
     //vegura custom
     registerMethod("Player", "getSpellLevelBySpellName", LuaScriptInterface::luaPlayerGetSpellLevelByName);
-    // registerMethod("Game", "getSpellList", LuaScriptInterface::luaGameGetSpellBoostDefinitionList);
+    registerMethod("Game", "getSpellList", LuaScriptInterface::luaGameGetSpellBoostDefinitionList);
 
     // Position
     registerClass("Position", "", LuaScriptInterface::luaPositionCreate);
@@ -2923,41 +2923,41 @@ bool LuaScriptInterface::getArea(lua_State *L, std::list<uint32_t> &list, uint32
     return (rows != 0);
 }
 
-// int LuaScriptInterface::luaGameGetSpellBoostDefinitionList(lua_State *L) {
-//     lua_newtable(L);
-//
-//     int index = 1;
-//     for (const auto &def: g_spells->getSpellBoostDefinitions()) {
-//         lua_newtable(L);
-//
-//         lua_pushinteger(L, def.id);
-//         lua_setfield(L, -2, "id");
-//
-//         lua_pushstring(L, def.spellName.c_str());
-//
-//
-//         lua_pushinteger(L, def.requiredLevel);
-//         lua_setfield(L, -2, "requiredLevel");
-//
-//         lua_pushinteger(L, def.group);
-//         lua_setfield(L, -2, "group");
-//
-//         lua_newtable(L);
-//         int vIndex = 1;
-//         for (uint16_t voc: def.vocations) {
-//             lua_pushinteger(L, voc);
-//             lua_rawseti(L, -2, vIndex++);
-//         }
-//         lua_setfield(L, -2, "vocations");
-//
-//         lua_pushstring(L, def.boostLevelsRaw.c_str());
-//         lua_setfield(L, -2, "boostLevels");
-//
-//         lua_rawseti(L, -2, index++);
-//     }
-//
-//     return 1;
-// }
+int LuaScriptInterface::luaGameGetSpellBoostDefinitionList(lua_State *L) {
+    lua_newtable(L);
+
+    int index = 1;
+    for (const auto &def: g_spells->getSpellBoostDefinitions()) {
+        lua_newtable(L);
+
+        lua_pushinteger(L, def.id);
+        lua_setfield(L, -2, "id");
+
+        lua_pushstring(L, def.spellName.c_str());
+
+
+        lua_pushinteger(L, def.requiredLevel);
+        lua_setfield(L, -2, "requiredLevel");
+
+        lua_pushinteger(L, def.group);
+        lua_setfield(L, -2, "group");
+
+        lua_newtable(L);
+        int vIndex = 1;
+        for (uint16_t voc: def.vocations) {
+            lua_pushinteger(L, voc);
+            lua_rawseti(L, -2, vIndex++);
+        }
+        lua_setfield(L, -2, "vocations");
+
+        lua_pushstring(L, def.boostLevelsRaw.c_str());
+        lua_setfield(L, -2, "boostLevels");
+
+        lua_rawseti(L, -2, index++);
+    }
+
+    return 1;
+}
 
 
 int LuaScriptInterface::luaCreateCombatArea(lua_State *L) {

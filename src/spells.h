@@ -34,14 +34,14 @@ class Spell;
 typedef std::map<uint16_t, bool> VocSpellMap;
 
 
-// struct SpellBoostDefinition {
-//     uint32_t id;
-//     std::string spellName;
-//     uint32_t requiredLevel;
-//     uint32_t group;
-//     std::vector<uint16_t> vocations;
-//     std::string boostLevelsRaw;
-// };
+struct SpellBoostDefinition {
+    uint32_t id;
+    std::string spellName;
+    uint32_t requiredLevel;
+    uint32_t group;
+    std::vector<uint16_t> vocations;
+    std::string boostLevelsRaw;
+};
 
 class Spells final : public BaseEvents {
 public:
@@ -73,10 +73,11 @@ public:
     static Position getCasterPosition(Creature *creature, Direction dir);
 
 
-    //  void loadSpellBoostDefinitionList();
-    // const std::vector<SpellBoostDefinition>& getSpellBoostDefinitions() const {
-    //     return spellBoostDefinitions;
-    // }
+    void loadSpellBoostDefinitionList();
+
+    const std::vector<SpellBoostDefinition> &getSpellBoostDefinitions() const {
+        return spellBoostDefinitions;
+    }
 
     std::string getScriptBaseName() const final;
 
@@ -97,7 +98,7 @@ protected:
     LuaScriptInterface scriptInterface;
 
 private:
-    // std::vector<SpellBoostDefinition> spellBoostDefinitions;
+    std::vector<SpellBoostDefinition> spellBoostDefinitions;
 };
 
 typedef bool (InstantSpellFunction)(const InstantSpell *spell, Creature *creature, const std::string &param);

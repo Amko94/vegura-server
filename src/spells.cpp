@@ -766,39 +766,39 @@ uint32_t Spell::getManaCost(const Player *player) const {
     return 0;
 }
 
-// void Spells::loadSpellBoostDefinitionList() {
-//     spellBoostDefinitions.clear();
-//
-//     Database *db = Database::getInstance();
-//     DBResult_ptr result = db->storeQuery(
-//         "SELECT Id, SpellName, RequiredCharacterLevel, `Group`, Vocations, SpellBoostLevels "
-//         "FROM spellboostdefinitions"
-//     );
-//
-//     if (!result) {
-//         return;
-//     }
-//
-//     do {
-//         SpellBoostDefinition def;
-//         def.id = result->getNumber<uint32_t>("Id");
-//         def.spellName = result->getString("SpellName");
-//         def.requiredLevel = result->getNumber<uint32_t>("RequiredCharacterLevel");
-//         def.group = result->getNumber<uint32_t>("Group");
-//
-//         def.boostLevelsRaw = result->getString("SpellBoostLevels");
-//
-//         std::string vocStr = result->getString("Vocations");
-//         std::stringstream ss(vocStr);
-//         std::string token;
-//
-//         while (std::getline(ss, token, ',')) {
-//             def.vocations.push_back(static_cast<uint16_t>(std::stoi(token)));
-//         }
-//
-//         spellBoostDefinitions.push_back(def);
-//     } while (result->next());
-// }
+void Spells::loadSpellBoostDefinitionList() {
+    spellBoostDefinitions.clear();
+
+    Database *db = Database::getInstance();
+    DBResult_ptr result = db->storeQuery(
+        "SELECT Id, SpellName, RequiredCharacterLevel, `Group`, Vocations, SpellBoostLevels "
+        "FROM spellboostdefinitions"
+    );
+
+    if (!result) {
+        return;
+    }
+
+    do {
+        SpellBoostDefinition def;
+        def.id = result->getNumber<uint32_t>("Id");
+        def.spellName = result->getString("SpellName");
+        def.requiredLevel = result->getNumber<uint32_t>("RequiredCharacterLevel");
+        def.group = result->getNumber<uint32_t>("Group");
+
+        def.boostLevelsRaw = result->getString("SpellBoostLevels");
+
+        std::string vocStr = result->getString("Vocations");
+        std::stringstream ss(vocStr);
+        std::string token;
+
+        while (std::getline(ss, token, ',')) {
+            def.vocations.push_back(static_cast<uint16_t>(std::stoi(token)));
+        }
+
+        spellBoostDefinitions.push_back(def);
+    } while (result->next());
+}
 
 
 ReturnValue Spell::CreateIllusion(Creature *creature, const Outfit_t &outfit, int32_t time) {
