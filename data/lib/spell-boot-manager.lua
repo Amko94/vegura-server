@@ -4,34 +4,17 @@ local spellDefinitions = {}
 local tomeOfSpellMastery = 7503
 
 function SpellBoostManager.loadSpells()
-    local file = io.open("data/spells/spells.xml", "r")
-    if not file then
-        print("[SpellBoostManager] Error: Could not load spells.xml")
-        return
-    end
+    print("[SpellBoost] loadSpells CALLED")
 
-    local content = file:read("*a")
-    file:close()
+    local spellList = getSpellBoostDefinitionsList()
+    print("[SpellBoost] spellList type:", type(spellList))
+    print("[SpellBoost] spellList size:", #spellList)
 
-    for line in content:gmatch("[^\n]+") do
-        if line:find("<instant") or line:find("<conjure") or line:find("<rune") then
-            local name = line:match('name="([^"]+)"')
-            local lvl = tonumber(line:match('lvl="([^"]+)"') or line:match('level="([^"]+)"')) or 0
-            local mana = tonumber(line:match('mana="([^"]+)"')) or 0
-            local group = line:match('group="([^"]+)"') or "attack"
-
-            if name then
-                local normalizedName = name:lower():gsub(" ", "")
-                spellDefinitions[normalizedName] = {
-                    spellName = name,
-                    spellType = group,
-                    manaCost = mana,
-                    requiredLevel = lvl
-                }
-            end
-        end
+    for i, spell in ipairs(spellList) do
+        print("[SpellBoost]", i, spell.spellName)
     end
 end
+
 
 function SpellBoostManager.calculateSpellPrice(spellName, boostLevel)
     local basePrice = 5000
