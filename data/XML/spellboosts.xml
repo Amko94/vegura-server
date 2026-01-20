@@ -1,16 +1,12 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <spellboosts>
-    <spell id="1" name="Energy Strike" requiredLevel="12" group="1">
+    <spell id="1" name="Energy Strike" requiredLevel="12" words="exori vis" group="1">
         <vocations>
             <vocation id="1"/>
             <vocation id="2"/>
             <vocation id="5"/>
             <vocation id="6"/>
         </vocations>
-        <icon>
-            <x>29</x>
-            <y>88</y>
-        </icon>
         <levels>
             <level index="1" type="1" value="5" description="Increase Damage for 5%"/>
             <level index="2" type="3" value="10" description="Increase Damage for 10%"/>
@@ -19,14 +15,13 @@
         </levels>
     </spell>
 
-    <spell id="2" name="Intense Healing" requiredLevel="11" group="2">
+    <spell id="2" name="Intense Healing" requiredLevel="11" words="exura gran" group="2">
         <vocations>
             <vocation id="1"/>
             <vocation id="2"/>
             <vocation id="5"/>
             <vocation id="6"/>
         </vocations>
-
         <levels>
             <level index="1" type="7" value="5" description="Increase Healing for 5%"/>
             <level index="2" type="7" value="10" description="Increase Healing for 10%"/>
@@ -35,12 +30,11 @@
         </levels>
     </spell>
 
-    <spell id="3" name="Berserk" requiredLevel="35" group="1">
+    <spell id="3" name="Berserk" requiredLevel="35" words="exori" group="1">
         <vocations>
             <vocation id="4"/>
             <vocation id="8"/>
         </vocations>
-
         <levels>
             <level index="1" type="3" value="5" description="Increase Damage for 5%"/>
             <level index="2" type="3" value="8" description="Increase Damage for 8%"/>
@@ -50,7 +44,7 @@
         </levels>
     </spell>
 
-    <spell id="4" name="Conjure Arrow" requiredLevel="13" group="4">
+    <spell id="4" name="Conjure Arrow" requiredLevel="13" words="exevo con" group="4">
         <vocations>
             <vocation id="3"/>
             <vocation id="7"/>
@@ -62,7 +56,7 @@
         </levels>
     </spell>
 
-    <spell id="5" name="Sudden Death" requiredLevel="45" group="4">
+    <spell id="5" name="Sudden Death" requiredLevel="45" words="adori vita vis" group="4">
         <vocations>
             <vocation id="1"/>
             <vocation id="5"/>
@@ -74,7 +68,7 @@
         </levels>
     </spell>
 
-    <spell id="6" name="Ethereal Spear" requiredLevel="23" group="1">
+    <spell id="6" name="Ethereal Spear" requiredLevel="23" words="exori con" group="1">
         <vocations>
             <vocation id="3"/>
             <vocation id="7"/>
@@ -88,7 +82,7 @@
         </levels>
     </spell>
 
-    <spell id="7" name="Haste" requiredLevel="14" group="3">
+    <spell id="7" name="Haste" requiredLevel="14" words="utani hur" group="3">
         <vocations>
             <vocation id="1"/>
             <vocation id="2"/>
@@ -108,7 +102,7 @@
         </levels>
     </spell>
 
-    <spell id="8" name="Whirlwind Throw" requiredLevel="15" group="1">
+    <spell id="8" name="Whirlwind Throw" requiredLevel="15" words="exori hur" group="1">
         <vocations>
             <vocation id="4"/>
             <vocation id="8"/>
