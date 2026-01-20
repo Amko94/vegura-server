@@ -82,6 +82,11 @@ bool ScriptingManager::loadScriptSystems()
 		return false;
 	}
 
+	if (!g_spells->loadSpellBoostDefinitionList()) {
+		std::cout << "> ERROR: Unable to load spell boosts!" << std::endl;
+		return false;
+	}
+
 	g_actions = new Actions();
 	if (!g_actions->loadFromXml()) {
 		std::cout << "> ERROR: Unable to load actions!" << std::endl;

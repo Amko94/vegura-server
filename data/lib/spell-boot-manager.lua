@@ -3,34 +3,57 @@
 local spellDefinitions = {}
 local tomeOfSpellMastery = 7503
 
-function SpellBoostManager.loadSpells()
-    local file = io.open("data/spells/spells.xml", "r")
-    if not file then
-        print("[SpellBoostManager] Error: Could not load spells.xml")
-        return
+local spellHideList = {
+    CREATURE_ILLUSION = 'Creature Illusion',
+    CURE_POISON = 'Cure Poison',
+    FIND_PERSON = 'Find Person',
+    GREAT_LIGHT = 'Great Light',
+    LIGHT = 'Light',
+    MAGIC_ROPE = 'Magic Rope',
+    ULTIMATE_HEALING = 'Ultimate Healing',
+    ULTIMATE_LIGHT = 'Ultimate Light',
+}
+
+local function isInHideList(spellName, hideList)
+    for _, hiddenName in ipairs(hideList) do
+        if spellName == hiddenName then
+            return true
+        end
     end
+    return false
+end
 
-    local content = file:read("*a")
-    file:close()
+local function spellHasVocation(spell, vocationId)
+    for _, vocId in ipairs(spell.vocations) do
+        if vocId == vocationId then
+            return true
+        end
+    end
+    return false
+end
 
-    for line in content:gmatch("[^\n]+") do
-        if line:find("<instant") or line:find("<conjure") or line:find("<rune") then
-            local name = line:match('name="([^"]+)"')
-            local lvl = tonumber(line:match('lvl="([^"]+)"') or line:match('level="([^"]+)"')) or 0
-            local mana = tonumber(line:match('mana="([^"]+)"')) or 0
-            local group = line:match('group="([^"]+)"') or "attack"
+function SpellBoostManager.loadSpells(player)
+    local spellList = getSpellBoostDefinitionsList()
+    local vocationId = player:getVocation():getId()
 
-            if name then
-                local normalizedName = name:lower():gsub(" ", "")
-                spellDefinitions[normalizedName] = {
-                    spellName = name,
-                    spellType = group,
-                    manaCost = mana,
-                    requiredLevel = lvl
-                }
+    local filteredSpells = {}
+    local addedSpellIds = {}
+
+    for _, spell in ipairs(spellList) do
+        if not isInHideList(spell.spellName, spellHideList) then
+
+            if spellHasVocation(spell, vocationId) then
+
+                if not addedSpellIds[spell.id] then
+                    table.insert(filteredSpells, spell)
+                    addedSpellIds[spell.id] = true
+                end
+
             end
         end
     end
+
+    return json.encode(filteredSpells)
 end
 
 function SpellBoostManager.calculateSpellPrice(spellName, boostLevel)

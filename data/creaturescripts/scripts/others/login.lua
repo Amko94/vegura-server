@@ -85,6 +85,6 @@ function onLogin(player)
     player:registerEvent("ExtendedOpcode")
     player:registerEvent("taskKill")
     TaskManager.sendAvailableTaskList(player)
-    SpellBoostManager.loadSpells()
+    SpellBoostManager.loadSpells(player)
     return true
 end

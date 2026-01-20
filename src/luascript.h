@@ -198,6 +198,7 @@ enum ErrorCode_t {
 class LuaScriptInterface
 {
 	public:
+
 		explicit LuaScriptInterface(std::string interfaceName);
 		virtual ~LuaScriptInterface();
 
@@ -207,6 +208,7 @@ class LuaScriptInterface
 
 		virtual bool initState();
 		bool reInitState();
+
 
 		int32_t loadFile(const std::string& file, Npc* npc = nullptr);
 
@@ -527,6 +529,7 @@ class LuaScriptInterface
 		static int luaTableCreate(lua_State* L);
 
 		// Game
+		static int getSpellBoostDefinitionList(lua_State* L);
 		static int luaGameGetSpectators(lua_State* L);
 		static int luaGameGetPlayers(lua_State* L);
 		static int luaGameLoadMap(lua_State* L);
