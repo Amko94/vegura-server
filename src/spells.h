@@ -37,6 +37,7 @@ struct SpellBoostLevel {
 struct SpellBoostDefinition {
     uint32_t id;
     std::string spellName;
+    std::string words;
     uint32_t requiredCharacterLevel;
     uint32_t group;
     uint32_t iconX;

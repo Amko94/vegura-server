@@ -245,23 +245,16 @@ bool Spells::loadSpellBoostDefinitionList() {
             def.spellName = attr.as_string();
         }
 
+        if ((attr = spellNode.attribute("words"))) {
+            def.words = attr.as_string();
+        }
+
         if ((attr = spellNode.attribute("requiredLevel"))) {
             def.requiredCharacterLevel = pugi::cast<uint32_t>(attr.value());
         }
 
         if ((attr = spellNode.attribute("group"))) {
             def.group = pugi::cast<uint32_t>(attr.value());
-        }
-
-        auto iconNode = spellNode.child("icon");
-        if (iconNode) {
-            pugi::xml_node xNode = iconNode.child("x");
-            pugi::xml_node yNode = iconNode.child("y");
-
-            if (xNode && yNode) {
-                def.iconX = xNode.text().as_uint();
-                def.iconY = yNode.text().as_uint();
-            }
         }
 
         for (auto vocNode: spellNode.child("vocations").children("vocation")) {

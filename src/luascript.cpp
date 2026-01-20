@@ -3945,17 +3945,14 @@ int LuaScriptInterface::getSpellBoostDefinitionList(lua_State *L) {
         lua_pushstring(L, def.spellName.c_str());
         lua_setfield(L, -2, "spellName");
 
+        lua_pushstring(L, def.words.c_str());
+        lua_setfield(L, -2, "words");
+
         lua_pushinteger(L, def.requiredCharacterLevel);
         lua_setfield(L, -2, "requiredCharacterLevel");
 
         lua_pushinteger(L, def.group);
         lua_setfield(L, -2, "group");
-
-        lua_pushinteger(L, def.iconX);
-        lua_setfield(L, -2, "iconX");
-
-        lua_pushinteger(L, def.iconY);
-        lua_setfield(L, -2, "iconY");
 
         lua_newtable(L);
         int v = 1;
