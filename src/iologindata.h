@@ -24,46 +24,72 @@
 #include "player.h"
 #include "database.h"
 
-typedef std::list<std::pair<int32_t, Item*>> ItemBlockList;
+typedef std::list<std::pair<int32_t, Item *> > ItemBlockList;
 
-class IOLoginData
-{
-	public:
-		static Account loadAccount(uint32_t accno);
-		static bool saveAccount(const Account& acc);
+class IOLoginData {
+public:
+    static Account loadAccount(uint32_t accno);
 
-		static bool loginserverAuthentication(uint32_t accountName, const std::string& password, Account& account);
-		static uint32_t gameworldAuthentication(uint32_t accountName, const std::string& password, std::string& characterName);
+    static bool saveAccount(const Account &acc);
 
-		static AccountType_t getAccountType(uint32_t accountId);
-		static void setAccountType(uint32_t accountId, AccountType_t accountType);
-		static void updateOnlineStatus(uint32_t guid, bool login);
-		static bool preloadPlayer(Player* player, const std::string& name);
+    static bool loginserverAuthentication(uint32_t accountName, const std::string &password, Account &account);
 
-		static bool loadPlayerById(Player* player, uint32_t id);
-		static bool loadPlayerByName(Player* player, const std::string& name);
-		static bool loadPlayer(Player* player, DBResult_ptr result);
-		static bool savePlayer(Player* player);
-		static uint32_t getGuidByName(const std::string& name);
-		static bool getGuidByNameEx(uint32_t& guid, bool& specialVip, std::string& name);
-		static std::string getNameByGuid(uint32_t guid);
-		static bool formatPlayerName(std::string& name);
-		static bool addStorageValue(uint32_t guid, uint32_t storageKey, uint32_t storageValue);
-		static void increaseBankBalance(uint32_t guid, uint64_t bankBalance);
-		static bool hasBiddedOnHouse(uint32_t guid);
+    static uint32_t gameworldAuthentication(uint32_t accountName, const std::string &password,
+                                            std::string &characterName);
 
-		static std::forward_list<VIPEntry> getVIPEntries(uint32_t accountId);
-		static void addVIPEntry(uint32_t accountId, uint32_t guid);
-		static void removeVIPEntry(uint32_t accountId, uint32_t guid);
+    static AccountType_t getAccountType(uint32_t accountId);
 
-		static void addPremiumDays(uint32_t accountId, int32_t addDays);
-		static void removePremiumDays(uint32_t accountId, int32_t removeDays);
+    static void setAccountType(uint32_t accountId, AccountType_t accountType);
 
-	protected:
-		typedef std::map<uint32_t, std::pair<Item*, uint32_t>> ItemMap;
+    static void updateOnlineStatus(uint32_t guid, bool login);
 
-		static void loadItems(ItemMap& itemMap, DBResult_ptr result);
-		static bool saveItems(const Player* player, const ItemBlockList& itemList, DBInsert& query_insert, PropWriteStream& stream);
+    static bool preloadPlayer(Player *player, const std::string &name);
+
+    static bool saveSpellBoostLevel(
+        uint32_t playerId,
+        const std::string &spellName,
+        uint8_t level
+    );
+
+    static bool loadPlayerById(Player *player, uint32_t id);
+
+    static bool loadPlayerByName(Player *player, const std::string &name);
+
+    static bool loadPlayer(Player *player, DBResult_ptr result);
+
+    static bool savePlayer(Player *player);
+
+    static uint32_t getGuidByName(const std::string &name);
+
+    static bool getGuidByNameEx(uint32_t &guid, bool &specialVip, std::string &name);
+
+    static std::string getNameByGuid(uint32_t guid);
+
+    static bool formatPlayerName(std::string &name);
+
+    static bool addStorageValue(uint32_t guid, uint32_t storageKey, uint32_t storageValue);
+
+    static void increaseBankBalance(uint32_t guid, uint64_t bankBalance);
+
+    static bool hasBiddedOnHouse(uint32_t guid);
+
+    static std::forward_list<VIPEntry> getVIPEntries(uint32_t accountId);
+
+    static void addVIPEntry(uint32_t accountId, uint32_t guid);
+
+    static void removeVIPEntry(uint32_t accountId, uint32_t guid);
+
+    static void addPremiumDays(uint32_t accountId, int32_t addDays);
+
+    static void removePremiumDays(uint32_t accountId, int32_t removeDays);
+
+protected:
+    typedef std::map<uint32_t, std::pair<Item *, uint32_t> > ItemMap;
+
+    static void loadItems(ItemMap &itemMap, DBResult_ptr result);
+
+    static bool saveItems(const Player *player, const ItemBlockList &itemList, DBInsert &query_insert,
+                          PropWriteStream &stream);
 };
 
 #endif

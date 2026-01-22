@@ -2024,9 +2024,10 @@ void LuaScriptInterface::registerFunctions() {
     // Player
     registerClass("Player", "Creature", LuaScriptInterface::luaPlayerCreate);
     registerMetaMethod("Player", "__eq", LuaScriptInterface::luaUserdataCompare);
-
     registerMethod("Player", "isPlayer", LuaScriptInterface::luaPlayerIsPlayer);
-
+    registerMethod("Player", "getSpellBoostLevels", LuaScriptInterface::luaGetPlayerSpellBoostLevels);
+    registerMethod("Player", "upgradeSpellLevel", LuaScriptInterface::luaPlayerUpgradeSpellLevel);
+    registerMethod("Player", "getUpgradeSpellPrice", LuaScriptInterface::luaPlayerGetUpgradeSpellPrice);
     registerMethod("Player", "getGuid", LuaScriptInterface::luaPlayerGetGuid);
     registerMethod("Player", "getIp", LuaScriptInterface::luaPlayerGetIp);
     registerMethod("Player", "getAccountId", LuaScriptInterface::luaPlayerGetAccountId);
@@ -3929,6 +3930,66 @@ int LuaScriptInterface::luaTableCreate(lua_State *L) {
     lua_createtable(L, getNumber<int32_t>(L, 1), getNumber<int32_t>(L, 2));
     return 1;
 }
+
+int LuaScriptInterface::luaGetPlayerSpellBoostLevels(lua_State *L) {
+    Player *player = getUserdata<Player>(L, 1);
+    if (!player) {
+        lua_pushnil(L);
+        return 1;
+    }
+
+    const auto &list = player->getSpellBoostLevels();
+
+    lua_newtable(L);
+
+    int index = 1;
+    for (const auto &boost: list) {
+        lua_newtable(L); // entry table
+
+        lua_pushstring(L, boost.spellName.c_str());
+        lua_setfield(L, -2, "spell");
+
+        lua_pushinteger(L, boost.level);
+        lua_setfield(L, -2, "level");
+
+        lua_rawseti(L, -2, index++);
+    }
+
+    return 1;
+}
+
+int LuaScriptInterface::luaPlayerGetUpgradeSpellPrice(lua_State *L) {
+    Player *player = getUserdata<Player>(L, 1);
+    if (!player) {
+        lua_pushnil(L);
+        return 1;
+    }
+
+    std::string spellName = getString(L, 2);
+
+    uint32_t price =
+            g_spells->getUpgradeSpellPrice(player, spellName);
+
+    lua_pushnumber(L, price);
+    return 1;
+}
+
+
+int LuaScriptInterface::luaPlayerUpgradeSpellLevel(lua_State *L) {
+    Player *player = getUserdata<Player>(L, 1);
+    if (!player) {
+        lua_pushboolean(L, false);
+        return 1;
+    }
+
+    std::string spellName = getString(L, 2);
+
+    bool result = player->upgradeSpellLevel(spellName);
+
+    lua_pushboolean(L, result);
+    return 1;
+}
+
 
 int LuaScriptInterface::getSpellBoostDefinitionList(lua_State *L) {
     const auto &list = g_spells->getSpellBoostDefinitionList();

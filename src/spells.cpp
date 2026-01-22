@@ -294,6 +294,52 @@ bool Spells::loadSpellBoostDefinitionList() {
     return true;
 }
 
+uint32_t Spells::getUpgradeSpellPrice(
+    const Player *player,
+    const std::string &spellName
+) const {
+    const SpellBoostDefinition *def = getSpellBoostDefinition(spellName);
+    if (!def) {
+        return 0;
+    }
+
+    const uint8_t currentLevel =
+            player->getSpellBoostLevelByName(spellName);
+
+    const uint8_t maxLevel =
+            static_cast<uint8_t>(def->spellBoostLevels.size());
+
+    if (currentLevel >= maxLevel) {
+        return 0;
+    }
+
+    const uint8_t nextLevel = currentLevel + 1;
+
+    constexpr uint32_t BASE_PRICE = 10'000;
+
+    const uint32_t requiredLevel = def->requiredCharacterLevel;
+
+    const float levelFactor =
+            1.0f + (static_cast<float>(requiredLevel) / 50.0f);
+
+    uint32_t price =
+            static_cast<uint32_t>(
+                BASE_PRICE * nextLevel * levelFactor
+            );
+
+    return price;
+}
+
+
+const SpellBoostDefinition *Spells::getSpellBoostDefinition(const std::string &spellName) const {
+    for (const auto &def: spellBoostDefinitions) {
+        if (def.spellName == spellName) {
+            return &def;
+        }
+    }
+    return nullptr;
+}
+
 
 InstantSpell *Spells::getInstantSpellByIndex(const Player *player, uint32_t index) {
     uint32_t count = 0;

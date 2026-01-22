@@ -39,7 +39,6 @@
             <level index="1" type="3" value="5" description="Increase Damage for 5%"/>
             <level index="2" type="3" value="8" description="Increase Damage for 8%"/>
             <level index="3" type="1" value="10" description="Reduce Mana Cost for 10%"/>
-            <level index="4" type="9" value="15" description="Reduce Cooldown for 15%"/>
             <level index="5" type="10" value="1" description="Increase Area of Effect for 1 Tile"/>
         </levels>
     </spell>

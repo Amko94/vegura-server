@@ -85,7 +85,7 @@ passwordType = "sha1"
 -- may cause high CPU usage with many players and potentially affect performance!
 
 allowChangeOutfit = true
-freePremium = false
+freePremium = true
 kickIdlePlayerAfterMinutes = 15
 maxMessageBuffer = 4
 emoteSpells = false

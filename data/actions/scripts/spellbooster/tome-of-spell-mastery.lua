@@ -5,6 +5,7 @@ function onUse(player)
         return false
     end
 
+    SpellBoostManager.getPlayerSpellLevels(player)
     local parsedSpellList = SpellBoostManager.loadSpells(player)
 
     player:sendExtendedOpcode(OPCODE_SPELL_BOOSTER_DIALOG, parsedSpellList)
