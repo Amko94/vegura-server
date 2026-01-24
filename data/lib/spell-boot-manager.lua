@@ -55,6 +55,13 @@ function SpellBoostManager.getSpellPrice(spellName, player)
 end
 
 function SpellBoostManager.boostSpell(spellName, player)
+
+    local tile = Tile(player:getPosition())
+    if not tile or not tile:hasFlag(TILESTATE_PROTECTIONZONE) then
+        player:sendTextMessage(MESSAGE_STATUS_DEFAULT, "You can only use this feature in a protection zone.")
+        player:sendExtendedOpcode(EXTENDED_ERROR_OPCODES.NO_PROTECT_ZONE)
+        return false
+    end
     local price = SpellBoostManager.getSpellPrice(spellName, player)
     if not price then
         player:sendCancelMessage("Spell cannot be upgraded.")
@@ -65,13 +72,11 @@ function SpellBoostManager.boostSpell(spellName, player)
         player:sendExtendedOpcode(EXTENDED_ERROR_OPCODES.MISSING_TOME_OF_SPELL_MASTERY)
         return false
     end
-
     if player:getMoney() < price then
         player:sendCancelMessage("You need " .. price .. " gold coins.")
         player:sendExtendedOpcode(EXTENDED_ERROR_OPCODES.NO_ENOUGH_MONEY)
         return false
     end
-
     local success = player:upgradeSpellLevel(spellName)
     if not success then
         player:sendCancelMessage("Spell cannot be upgraded further.")
