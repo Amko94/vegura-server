@@ -15,10 +15,13 @@ TASK_MANAGER_EXTENDED_OPCODES = {
 
 SPELL_BOOSTER_MANAGER_EXTENDED_OPCODES = {
 
+    SEND_SPELL_BOOST_DEFINITIONS = 28,
+    OPEN_SPELL_BOOST_WINDOW = 29,
     SPELL_PRICE_REQUEST = 30,
     SEND_SPELL_PRICE = 31,
     BOOST_SPELL = 32,
-    SEND_SPELL_BOOST_DEFINITION = 33,
+    SEND_PAYER_SPELL_LEVELS = 33,
+    UPGRADE_SUCCESSFUL = 34,
 }
 
 EXTENDED_ERROR_OPCODES = {
@@ -139,7 +142,7 @@ local function handleSpellPriceRequest(player, buffer)
         return
     end
 
-    SpellBoostManager.getSpellPrice(spellName, player)
+    SpellBoostManager.sendSpellPrice(player, spellName)
 
 end
 
@@ -149,7 +152,6 @@ local function handleBoostSpell(player, buffer)
         print('SpellName cannot be null')
         return
     end
-
     SpellBoostManager.boostSpell(spellName, player)
 
 end

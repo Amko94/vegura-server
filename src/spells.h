@@ -82,6 +82,10 @@ public:
 
     bool loadSpellBoostDefinitionList();
 
+    uint32_t getUpgradeSpellPrice(const Player *player, const std::string &spellName) const;
+
+    const SpellBoostDefinition *getSpellBoostDefinition(const std::string &spellName) const;
+
     InstantSpell *getInstantSpellByIndex(const Player *player, uint32_t index);
 
 
