@@ -2028,6 +2028,7 @@ void LuaScriptInterface::registerFunctions() {
     registerMethod("Player", "getSpellBoostLevels", LuaScriptInterface::luaGetPlayerSpellBoostLevels);
     registerMethod("Player", "upgradeSpellLevel", LuaScriptInterface::luaPlayerUpgradeSpellLevel);
     registerMethod("Player", "getUpgradeSpellPrice", LuaScriptInterface::luaPlayerGetUpgradeSpellPrice);
+    registerMethod("Player", "getSpellBoostValue", LuaScriptInterface::luaPlayerGetSpellBoostValue);
     registerMethod("Player", "getGuid", LuaScriptInterface::luaPlayerGetGuid);
     registerMethod("Player", "getIp", LuaScriptInterface::luaPlayerGetIp);
     registerMethod("Player", "getAccountId", LuaScriptInterface::luaPlayerGetAccountId);
@@ -3971,6 +3972,18 @@ int LuaScriptInterface::luaPlayerGetUpgradeSpellPrice(lua_State *L) {
             g_spells->getUpgradeSpellPrice(player, spellName);
 
     lua_pushnumber(L, price);
+    return 1;
+}
+
+int LuaScriptInterface::luaPlayerGetSpellBoostValue(lua_State *L) {
+    Player *player = getUserdata<Player>(L, 1);
+    if (!player) {
+        lua_pushnil(L);
+        return 1;
+    }
+
+    float value = player->playerGetSpellBoostValue(getString(L, 2), getNumber<uint8_t>(L, 3));
+    lua_pushnumber(L, value);
     return 1;
 }
 

@@ -1,14 +1,12 @@
-﻿local OPCODE_SPELL_BOOSTER_DIALOG = 200
+﻿TOME_OF_SPELL_MASTERY = 7503
 
 function onUse(player)
     if not player then
-        return false
+        return true
     end
 
     SpellBoostManager.getPlayerSpellLevels(player)
-    local parsedSpellList = SpellBoostManager.loadSpells(player)
 
-    player:sendExtendedOpcode(OPCODE_SPELL_BOOSTER_DIALOG, parsedSpellList)
-
+    player:sendExtendedOpcode(SPELL_BOOSTER_MANAGER_EXTENDED_OPCODES.OPEN_SPELL_BOOST_WINDOW)
     return true
 end

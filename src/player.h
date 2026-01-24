@@ -174,6 +174,8 @@ public:
 
     bool upgradeSpellLevel(const std::string &spellName);
 
+    float playerGetSpellBoostValue(const std::string &spellName, uint8_t boostType) const;
+
 
     const std::vector<PlayerSpellBoostLevel> &getSpellBoostLevels() const {
         return playerSpellBoostLevels;

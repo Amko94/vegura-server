@@ -261,6 +261,35 @@ bool Player::upgradeSpellLevel(const std::string &spellName) {
     return true;
 }
 
+float Player::playerGetSpellBoostValue(const std::string &spellName, uint8_t boostType) const {
+    const SpellBoostDefinition *def =
+            g_spells->getSpellBoostDefinition(spellName);
+
+    if (!def) {
+        return 0.0f;
+    }
+
+    const uint8_t playerLevel = getSpellBoostLevelByName(spellName);
+
+    float highestValue = 0.0f;
+
+    for (const auto &e: def->spellBoostLevels) {
+        if (e.type != boostType) {
+            continue;
+        }
+
+        if (e.level > playerLevel) {
+            continue;
+        }
+
+        if (e.value > highestValue) {
+            highestValue = e.value;
+        }
+    }
+
+    return highestValue;
+}
+
 
 std::string Player::getDescription(int32_t lookDistance) const {
     std::ostringstream s;
