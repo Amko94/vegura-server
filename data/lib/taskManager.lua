@@ -1,6 +1,6 @@
 TaskManager = {}
 
-function TaskManager.sendAvailableTaskList(player)
+function TaskManager.sendTaskList(player)
     if not player then
         return false
     end

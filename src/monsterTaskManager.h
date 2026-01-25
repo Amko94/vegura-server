@@ -3,7 +3,6 @@
 #include <cstdint>
 #include <string>
 #include <vector>
-#include <ctime>
 
 struct TaskMonster {
     std::string name;
@@ -14,7 +13,7 @@ struct TaskMonster {
 struct MonsterTaskDefinition {
     uint32_t id;
     std::string name;
-    uint8_t category;
+    uint32_t category;
     uint32_t experience;
 
     std::vector<TaskMonster> monsters;

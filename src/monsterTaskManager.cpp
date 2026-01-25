@@ -1,8 +1,6 @@
 ﻿#include "otpch.h"
 #include "monsterTaskManager.h"
 #include "database.h"
-#include "player.h"
-#include "pugixml.hpp"
 #include "tools.h"
 #include "pugicast.h"
 
@@ -34,7 +32,7 @@ bool MonsterTaskManager::loadMonsterTaskDefinitionList() {
         }
 
         if ((attr = taskNode.attribute("category"))) {
-            def.category = pugi::cast<uint8_t>(attr.value());
+            def.category = attr.as_uint();
         }
 
         if ((attr = taskNode.attribute("experience"))) {

@@ -53,7 +53,7 @@ end
 
 local function handleRequestTaskList(player, buffer)
     print("[ExtendedOpcode] Request: Available tasks")
-    TaskManager.sendAvailableTaskList(player)
+    TaskManager.sendTaskList(player)
     TaskManager.sendPlayerTasksToClient(player)
 end
 
