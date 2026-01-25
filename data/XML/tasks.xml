@@ -1,0 +1,694 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<tasks>
+
+    <task id="1" name="Bat" category="1" experience="10">
+        <monsters>
+            <monster name="Bat" lookType="122"/>
+        </monsters>
+    </task>
+
+    <task id="2" name="Rats" category="1" experience="10">
+        <monsters>
+            <monster name="Cave Rat" lookType="56"/>
+            <monster name="Rat" lookType="21"/>
+        </monsters>
+    </task>
+
+    <task id="3" name="Snake" category="1" experience="10">
+        <monsters>
+            <monster name="Snake" lookType="28"/>
+        </monsters>
+    </task>
+
+    <task id="4" name="Bug" category="1" experience="18">
+        <monsters>
+            <monster name="Bug" lookType="45"/>
+        </monsters>
+    </task>
+
+    <task id="5" name="Hyaena" category="1" experience="20">
+        <monsters>
+            <monster name="Hyaena" lookType="94"/>
+        </monsters>
+    </task>
+
+    <task id="6" name="Bear" category="1" experience="23">
+        <monsters>
+            <monster name="Bear" lookType="16"/>
+        </monsters>
+    </task>
+
+    <task id="7" name="Goblin" category="1" experience="25">
+        <monsters>
+            <monster name="Goblin" lookType="61"/>
+        </monsters>
+    </task>
+
+    <task id="8" name="Crab" category="1" experience="30">
+        <monsters>
+            <monster name="Crab" lookType="112"/>
+        </monsters>
+    </task>
+
+    <task id="9" name="Lion" category="1" experience="30">
+        <monsters>
+            <monster name="Lion" lookType="41"/>
+        </monsters>
+    </task>
+
+    <task id="10" name="Centipede" category="1" experience="34">
+        <monsters>
+            <monster name="Centipede" lookType="124"/>
+        </monsters>
+    </task>
+
+    <task id="11" name="Cobra" category="1" experience="35">
+        <monsters>
+            <monster name="Cobra" lookType="81"/>
+        </monsters>
+    </task>
+
+    <task id="12" name="Crocodile" category="1" experience="40">
+        <monsters>
+            <monster name="Crocodile" lookType="119"/>
+        </monsters>
+    </task>
+
+    <task id="13" name="Weak Spiders" category="1" experience="40">
+        <monsters>
+            <monster name="Poison Spider" lookType="36"/>
+            <monster name="Spider" lookType="30"/>
+        </monsters>
+    </task>
+
+    <task id="14" name="Rotworm" category="1" experience="40">
+        <monsters>
+            <monster name="Rotworm" lookType="26"/>
+        </monsters>
+    </task>
+
+    <task id="15" name="Wasp" category="1" experience="40">
+        <monsters>
+            <monster name="Wasp" lookType="44"/>
+        </monsters>
+    </task>
+
+    <task id="16" name="Larva" category="1" experience="44">
+        <monsters>
+            <monster name="Larva" lookType="82"/>
+        </monsters>
+    </task>
+
+    <task id="17" name="Dwors" category="1" experience="45">
+        <monsters>
+            <monster name="Dworc Fleshhunter" lookType="215"/>
+            <monster name="Dworc Venomsniper" lookType="216"/>
+            <monster name="Dworc Voodoomaster" lookType="214"/>
+        </monsters>
+    </task>
+
+    <task id="18" name="Scorpion" category="1" experience="45">
+        <monsters>
+            <monster name="Scorpion" lookType="43"/>
+        </monsters>
+    </task>
+
+    <task id="19" name="Weak Orcs" category="1" experience="50">
+        <monsters>
+            <monster name="Orc" lookType="5"/>
+            <monster name="Orc Spearman" lookType="50"/>
+            <monster name="Orc Warrior" lookType="7"/>
+        </monsters>
+    </task>
+
+    <task id="20" name="Troll's" category="1" experience="60">
+        <monsters>
+            <monster name="Troll" lookType="15"/>
+            <monster name="Frost Troll" lookType="53"/>
+            <monster name="Island Troll" lookType="15"/>
+            <monster name="Swamp Troll" lookType="76"/>
+        </monsters>
+    </task>
+
+    <task id="21" name="Wild Warrior" category="1" experience="60">
+        <monsters>
+            <monster name="Wild Warrior" lookType="131"/>
+        </monsters>
+    </task>
+
+    <task id="22" name="Weak Minotaurs" category="1" experience="65">
+        <monsters>
+            <monster name="Minotaur" lookType="25"/>
+            <monster name="Minotaur Archer" lookType="24"/>
+        </monsters>
+    </task>
+
+    <task id="23" name="Bandit" category="1" experience="65">
+        <monsters>
+            <monster name="Bandit" lookType="129"/>
+        </monsters>
+    </task>
+
+    <task id="24" name="Weak Undeads" category="1" experience="68">
+        <monsters>
+            <monster name="Ghoul" lookType="18"/>
+            <monster name="Skeleton" lookType="33"/>
+        </monsters>
+    </task>
+
+    <task id="25" name="Weak Dwarves" category="1" experience="70">
+        <monsters>
+            <monster name="Dwarf Soldier" lookType="71"/>
+            <monster name="Dwarf" lookType="69"/>
+        </monsters>
+    </task>
+
+    <task id="26" name="Carrion Worm" category="1" experience="70">
+        <monsters>
+            <monster name="Carrion Worm" lookType="192"/>
+        </monsters>
+    </task>
+
+    <task id="27" name="Weak Elf's" category="1" experience="75">
+        <monsters>
+            <monster name="Elf" lookType="62"/>
+            <monster name="Elf Scout" lookType="64"/>
+        </monsters>
+    </task>
+
+    <task id="28" name="Weak Wolfs" category="1" experience="80">
+        <monsters>
+            <monster name="Winter Wolf" lookType="52"/>
+            <monster name="Wolf" lookType="27"/>
+        </monsters>
+    </task>
+
+    <task id="29" name="Amazons" category="1" experience="85">
+        <monsters>
+            <monster name="Amazon" lookType="137"/>
+            <monster name="Valkyrie" lookType="139"/>
+        </monsters>
+    </task>
+
+    <task id="30" name="Novice of the Cult" category="1" experience="100">
+        <monsters>
+            <monster name="Novice of the Cult" lookType="133"/>
+        </monsters>
+    </task>
+
+    <task id="31" name="Stalker" category="1" experience="100">
+        <monsters>
+            <monster name="Stalker" lookType="128"/>
+        </monsters>
+    </task>
+
+    <task id="32" name="War Wolf" category="1" experience="100">
+        <monsters>
+            <monster name="War Wolf" lookType="3"/>
+        </monsters>
+    </task>
+
+    <task id="33" name="Assassin" category="1" experience="105">
+        <monsters>
+            <monster name="Assassin" lookType="129"/>
+        </monsters>
+    </task>
+
+    <task id="34" name="Weak Pirates" category="1" experience="120">
+        <monsters>
+            <monster name="Pirate Marauder" lookType="93"/>
+            <monster name="Pirate Skeleton" lookType="195"/>
+        </monsters>
+    </task>
+
+    <task id="35" name="Scarab" category="1" experience="120">
+        <monsters>
+            <monster name="Scarab" lookType="83"/>
+        </monsters>
+    </task>
+
+    <task id="36" name="Tarantula" category="1" experience="120">
+        <monsters>
+            <monster name="Tarantula" lookType="219"/>
+        </monsters>
+    </task>
+
+    <task id="37" name="Monkeys" category="1" experience="140">
+        <monsters>
+            <monster name="Kongra" lookType="116"/>
+            <monster name="Merlkin" lookType="117"/>
+            <monster name="Sibang" lookType="118"/>
+        </monsters>
+    </task>
+
+    <task id="38" name="Monks" category="1" experience="145">
+        <monsters>
+            <monster name="Dark Monk" lookType="57"/>
+            <monster name="Monk" lookType="57"/>
+        </monsters>
+    </task>
+
+    <task id="39" name="Fire Devil" category="1" experience="145">
+        <monsters>
+            <monster name="Fire Devil" lookType="40"/>
+        </monsters>
+    </task>
+
+    <task id="40" name="Carniphila" category="1" experience="150">
+        <monsters>
+            <monster name="Carniphila" lookType="120"/>
+        </monsters>
+    </task>
+
+    <task id="41" name="Cyclops" category="1" experience="150">
+        <monsters>
+            <monster name="Cyclops" lookType="23"/>
+        </monsters>
+    </task>
+
+    <task id="42" name="Frost Giants" category="1" experience="150">
+        <monsters>
+            <monster name="Frost Giant" lookType="265"/>
+            <monster name="Frost Giantess" lookType="265"/>
+        </monsters>
+    </task>
+
+    <task id="43" name="Gargoyle" category="1" experience="150">
+        <monsters>
+            <monster name="Gargoyle" lookType="95"/>
+        </monsters>
+    </task>
+
+    <task id="44" name="Hunter" category="1" experience="150">
+        <monsters>
+            <monster name="Hunter" lookType="129"/>
+        </monsters>
+    </task>
+
+    <task id="45" name="Terror Bird" category="1" experience="150">
+        <monsters>
+            <monster name="Terror Bird" lookType="218"/>
+        </monsters>
+    </task>
+
+    <task id="46" name="Tortoises" category="1" experience="150">
+        <monsters>
+            <monster name="Thornback Tortoise" lookType="198"/>
+            <monster name="Tortoise" lookType="197"/>
+        </monsters>
+    </task>
+
+    <task id="47" name="Advanced Minotaurs" category="1" experience="160">
+        <monsters>
+            <monster name="Minotaur Guard" lookType="29"/>
+            <monster name="Minotaur Mage" lookType="23"/>
+        </monsters>
+    </task>
+
+    <task id="48" name="Blood Crab" category="1" experience="160">
+        <monsters>
+            <monster name="Blood Crab" lookType="200"/>
+        </monsters>
+    </task>
+
+    <task id="49" name="Elephant" category="1" experience="160">
+        <monsters>
+            <monster name="Elephant" lookType="211"/>
+        </monsters>
+    </task>
+
+    <task id="50" name="Mammoth" category="1" experience="160">
+        <monsters>
+            <monster name="Mammoth" lookType="199"/>
+        </monsters>
+    </task>
+
+    <task id="51" name="Slime" category="1" experience="160">
+        <monsters>
+            <monster name="Slime" lookType="19"/>
+        </monsters>
+    </task>
+
+    <task id="52" name="Stone Golem" category="1" experience="160">
+        <monsters>
+            <monster name="Stone Golem" lookType="67"/>
+        </monsters>
+    </task>
+
+    <task id="53" name="Advanced Orcs" category="1" experience="165">
+        <monsters>
+            <monster name="Orc Rider" lookType="8"/>
+            <monster name="Orc Berserker" lookType="4"/>
+            <monster name="Orc Shaman" lookType="6"/>
+        </monsters>
+    </task>
+
+    <task id="54" name="Beholder" category="1" experience="170">
+        <monsters>
+            <monster name="Beholder" lookType="17"/>
+        </monsters>
+    </task>
+
+    <task id="55" name="Elf Arcanist" category="1" experience="175">
+        <monsters>
+            <monster name="Elf Arcanist" lookType="63"/>
+        </monsters>
+    </task>
+
+    <task id="56" name="Advanced Undeads" category="1" experience="192">
+        <monsters>
+            <monster name="Crypt Shambler" lookType="100"/>
+            <monster name="Demon Skeleton" lookType="37"/>
+            <monster name="Ghost" lookType="48"/>
+            <monster name="Mummy" lookType="65"/>
+            <monster name="Priestess" lookType="58"/>
+        </monsters>
+    </task>
+
+    <task id="57" name="Barbarians" category="1" experience="195">
+        <monsters>
+            <monster name="Barbarian Bloodwalker" lookType="255"/>
+            <monster name="Barbarian Headsplitter" lookType="253"/>
+            <monster name="Barbarian Skullhunter" lookType="254"/>
+        </monsters>
+    </task>
+
+    <task id="58" name="Lizards" category="1" experience="210">
+        <monsters>
+            <monster name="Lizard Sentinel" lookType="114"/>
+            <monster name="Lizard Snakecharmer" lookType="115"/>
+            <monster name="Lizard Templar" lookType="113"/>
+        </monsters>
+    </task>
+
+    <task id="59" name="Advanced Dwarves" category="1" experience="212">
+        <monsters>
+            <monster name="Dwarf Geomancer" lookType="66"/>
+            <monster name="Dwarf Guard" lookType="70"/>
+        </monsters>
+    </task>
+
+    <task id="60" name="Blue Djinn" category="1" experience="215">
+        <monsters>
+            <monster name="Blue Djinn" lookType="80"/>
+        </monsters>
+    </task>
+
+    <task id="61" name="Green Djinn" category="1" experience="215">
+        <monsters>
+            <monster name="Green Djinn" lookType="51"/>
+        </monsters>
+    </task>
+    <task id="62" name="Fire Elemental" category="1" experience="220">
+        <monsters>
+            <monster name="Fire Elemental" lookType="49"/>
+        </monsters>
+    </task>
+
+    <task id="63" name="Witch" category="1" experience="240">
+        <monsters>
+            <monster name="Witch" lookType="54"/>
+        </monsters>
+    </task>
+
+    <task id="64" name="Elder Beholder" category="1" experience="280">
+        <monsters>
+            <monster name="Elder Beholder" lookType="108"/>
+        </monsters>
+    </task>
+
+    <task id="65" name="Ice Golem" category="1" experience="295">
+        <monsters>
+            <monster name="Ice Golem" lookType="261"/>
+        </monsters>
+    </task>
+
+    <task id="66" name="Advanced Cults" category="2" experience="300">
+        <monsters>
+            <monster name="Acolyte of the Cult" lookType="194"/>
+            <monster name="Adept of the Cult" lookType="194"/>
+            <monster name="Enlightened of the Cult" lookType="193"/>
+        </monsters>
+    </task>
+
+    <task id="67" name="Advanced Pirates" category="2" experience="300">
+        <monsters>
+            <monster name="Pirate Buccaneer" lookType="97"/>
+            <monster name="Pirate Corsair" lookType="98"/>
+            <monster name="Pirate Cutthroat" lookType="96"/>
+            <monster name="Pirate Ghost" lookType="196"/>
+        </monsters>
+    </task>
+
+    <task id="68" name="Quara Constrictor" category="2" experience="380">
+        <monsters>
+            <monster name="Quara Constrictor" lookType="46"/>
+        </monsters>
+    </task>
+
+    <task id="69" name="Efreet" category="2" experience="410">
+        <monsters>
+            <monster name="Efreet" lookType="103"/>
+        </monsters>
+    </task>
+
+    <task id="70" name="Marid" category="2" experience="410">
+        <monsters>
+            <monster name="Marid" lookType="104"/>
+        </monsters>
+    </task>
+
+    <task id="71" name="Strong Undeads" category="2" experience="464">
+        <monsters>
+            <monster name="Banshee" lookType="101"/>
+            <monster name="Bonebeast" lookType="78"/>
+            <monster name="Lich" lookType="99"/>
+            <monster name="Necromancer" lookType="9"/>
+            <monster name="Vampire" lookType="68"/>
+        </monsters>
+    </task>
+
+    <task id="72" name="Wyvern" category="2" experience="515">
+        <monsters>
+            <monster name="Wyvern" lookType="239"/>
+        </monsters>
+    </task>
+
+    <task id="73" name="Strong Orcs" category="2" experience="536">
+        <monsters>
+            <monster name="Orc Leader" lookType="59"/>
+            <monster name="Orc Warlord" lookType="2"/>
+        </monsters>
+    </task>
+
+    <task id="74" name="Ice Witch" category="2" experience="580">
+        <monsters>
+            <monster name="Ice Witch" lookType="149"/>
+        </monsters>
+    </task>
+
+    <task id="75" name="Water Elemental" category="2" experience="650">
+        <monsters>
+            <monster name="Water Elemental" lookType="11"/>
+        </monsters>
+    </task>
+
+    <task id="76" name="Dragon" category="2" experience="700">
+        <monsters>
+            <monster name="Dragon" lookType="34"/>
+        </monsters>
+    </task>
+
+    <task id="77" name="Ancient Scarab" category="2" experience="720">
+        <monsters>
+            <monster name="Ancient Scarab" lookType="79"/>
+        </monsters>
+    </task>
+
+    <task id="78" name="Crystal Spider" category="2" experience="900">
+        <monsters>
+            <monster name="Crystal Spider" lookType="263"/>
+        </monsters>
+    </task>
+
+    <task id="79" name="Giant Spider" category="2" experience="900">
+        <monsters>
+            <monster name="Giant Spider" lookType="38"/>
+        </monsters>
+    </task>
+
+    <task id="80" name="Advanced Quaras" category="2" experience="900">
+        <monsters>
+            <monster name="Quara Hydromancer" lookType="47"/>
+            <monster name="Quara Mantassin" lookType="72"/>
+        </monsters>
+    </task>
+
+    <task id="81" name="Braindeath" category="2" experience="985">
+        <monsters>
+            <monster name="Braindeath" lookType="256"/>
+        </monsters>
+    </task>
+
+    <task id="82" name="Hero" category="3" experience="1200">
+        <monsters>
+            <monster name="Hero" lookType="73"/>
+        </monsters>
+    </task>
+
+    <task id="83" name="Black Knight" category="3" experience="1600">
+        <monsters>
+            <monster name="Black Knight" lookType="131"/>
+        </monsters>
+    </task>
+
+    <task id="84" name="Strong Quaras" category="3" experience="1700">
+        <monsters>
+            <monster name="Quara Pincher" lookType="77"/>
+            <monster name="Quara Predator" lookType="20"/>
+        </monsters>
+    </task>
+    <task id="85" name="Nightmare" category="3" experience="1800">
+        <monsters>
+            <monster name="Nightmare" lookType="245"/>
+        </monsters>
+    </task>
+
+    <task id="86" name="Dragon Lord" category="3" experience="2100">
+        <monsters>
+            <monster name="Dragon Lord" lookType="39"/>
+        </monsters>
+    </task>
+
+    <task id="87" name="Frost Dragon" category="3" experience="2100">
+        <monsters>
+            <monster name="Frost Dragon" lookType="248"/>
+        </monsters>
+    </task>
+
+    <task id="88" name="Hydra" category="3" experience="2100">
+        <monsters>
+            <monster name="Hydra" lookType="121"/>
+        </monsters>
+    </task>
+
+    <task id="89" name="Spectre" category="3" experience="2100">
+        <monsters>
+            <monster name="Spectre" lookType="235"/>
+        </monsters>
+    </task>
+
+    <task id="90" name="Behemoth" category="3" experience="2500">
+        <monsters>
+            <monster name="Behemoth" lookType="55"/>
+        </monsters>
+    </task>
+
+    <task id="91" name="Destroyer" category="3" experience="2500">
+        <monsters>
+            <monster name="Destroyer" lookType="236"/>
+        </monsters>
+    </task>
+
+    <task id="92" name="Diabolic Imp" category="3" experience="2900">
+        <monsters>
+            <monster name="Diabolic Imp" lookType="237"/>
+        </monsters>
+    </task>
+
+    <task id="93" name="Serpent Spawn" category="3" experience="3050">
+        <monsters>
+            <monster name="Serpent Spawn" lookType="220"/>
+        </monsters>
+    </task>
+
+    <task id="94" name="Betrayed Wraith" category="4" experience="3500">
+        <monsters>
+            <monster name="Betrayed Wraith" lookType="233"/>
+        </monsters>
+    </task>
+
+    <task id="95" name="Defiler" category="4" experience="3700">
+        <monsters>
+            <monster name="Defiler" lookType="238"/>
+        </monsters>
+    </task>
+
+    <task id="96" name="Hellfire Fighter" category="4" experience="3800">
+        <monsters>
+            <monster name="Hellfire Fighter" lookType="243"/>
+        </monsters>
+    </task>
+
+    <task id="97" name="Plaguesmith" category="4" experience="3800">
+        <monsters>
+            <monster name="Plaguesmith" lookType="247"/>
+        </monsters>
+    </task>
+
+    <task id="98" name="Fury" category="4" experience="4000">
+        <monsters>
+            <monster name="Fury" lookType="149"/>
+        </monsters>
+    </task>
+
+    <task id="99" name="Lost Soul" category="4" experience="4000">
+        <monsters>
+            <monster name="Lost Soul" lookType="232"/>
+        </monsters>
+    </task>
+
+    <task id="100" name="Warlock" category="4" experience="4000">
+        <monsters>
+            <monster name="Warlock" lookType="130"/>
+        </monsters>
+    </task>
+
+    <task id="101" name="Phantasm" category="4" experience="4400">
+        <monsters>
+            <monster name="Phantasm" lookType="241"/>
+        </monsters>
+    </task>
+
+    <task id="102" name="Dark Torturer" category="4" experience="4650">
+        <monsters>
+            <monster name="Dark Torturer" lookType="234"/>
+        </monsters>
+    </task>
+
+    <task id="103" name="Hand of Cursed Fate" category="4" experience="5000">
+        <monsters>
+            <monster name="Hand of Cursed Fate" lookType="230"/>
+        </monsters>
+    </task>
+
+    <task id="104" name="Hellhound" category="4" experience="5440">
+        <monsters>
+            <monster name="Hellhound" lookType="240"/>
+        </monsters>
+    </task>
+
+    <task id="105" name="Demon" category="4" experience="6000">
+        <monsters>
+            <monster name="Demon" lookType="35"/>
+        </monsters>
+    </task>
+
+    <task id="106" name="Blightwalker" category="4" experience="6400">
+        <monsters>
+            <monster name="Blightwalker" lookType="246"/>
+        </monsters>
+    </task>
+
+    <task id="107" name="Undead Dragon" category="4" experience="7500">
+        <monsters>
+            <monster name="Undead Dragon" lookType="231"/>
+        </monsters>
+    </task>
+
+    <task id="108" name="Juggernaut" category="4" experience="11200">
+        <monsters>
+            <monster name="Juggernaut" lookType="244"/>
+        </monsters>
+    </task>
+</tasks>

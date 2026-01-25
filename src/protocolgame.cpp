@@ -2059,18 +2059,5 @@ void ProtocolGame::MoveDownCreature(NetworkMessage &msg, const Creature *creatur
 void ProtocolGame::parseExtendedOpcode(NetworkMessage &msg) {
     uint8_t opcode = msg.getByte();
     std::string buffer = msg.getString();
-
-    std::cout << "[SERVER] Received ExtendedOpcode!" << std::endl;
-    std::cout << "[SERVER] Opcode: " << static_cast<int>(opcode) << std::endl;
-    std::cout << "[SERVER] Buffer Raw (" << buffer.size() << " bytes): ";
-
-    for (size_t i = 0; i < buffer.size(); ++i) {
-        std::cout << "0x" << std::hex << static_cast<int>(buffer[i] & 0xFF) << " ";
-    }
-    std::cout << std::dec << std::endl; // zurück zu Dezimal
-
-    std::cout << "[SERVER] Buffer as text: " << buffer << std::endl;
-
-    // Dein existierender Task-Dispatch bleibt bestehen:
     addGameTask(&Game::parsePlayerExtendedOpcode, player->getID(), opcode, buffer);
 }

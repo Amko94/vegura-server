@@ -90,7 +90,7 @@ function SpellBoostManager.boostSpell(spellName, player)
             MESSAGE_EVENT_ADVANCE,
             "Spell upgraded successfully!"
     )
-    player:getPosition():sendMagicEffect(CONST_ME_MAGIC_BLUE)
+    player:getPosition():sendMagicEffect(CONST_ME_SPELL_BOOST)
 
     player:sendExtendedOpcode(SPELL_BOOSTER_MANAGER_EXTENDED_OPCODES.UPGRADE_SUCCESSFUL)
     SpellBoostManager.getPlayerSpellLevels(player)

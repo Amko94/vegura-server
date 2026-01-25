@@ -161,6 +161,7 @@ Player::~Player() {
     setEditHouse(nullptr);
 }
 
+
 bool Player::setVocation(uint16_t vocId) {
     Vocation *voc = g_vocations.getVocation(vocId);
     if (!voc) {
@@ -183,6 +184,22 @@ bool Player::isPushable() const {
         return false;
     }
     return Creature::isPushable();
+}
+
+uint32_t Player::getPlayerTaskPoints(uint32_t playerId) {
+    Database *db = Database::getInstance();
+
+    std::ostringstream query;
+    query << "SELECT TaskPoints "
+            << "FROM Players "
+            << "WHERE id = " << playerId;
+
+    DBResult_ptr result = db->storeQuery(query.str());
+    if (!result) {
+        return 0;
+    }
+
+    return result->getNumber<uint32_t>("TaskPoints");
 }
 
 bool Player::loadPlayerSpellBoostLevels(uint32_t playerId) {

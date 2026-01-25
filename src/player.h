@@ -135,6 +135,8 @@ public:
     // non-copyable
     Player(const Player &) = delete;
 
+    uint32_t getPlayerTaskPoints(uint32_t playerId);
+
     Player &operator=(const Player &) = delete;
 
     Player *getPlayer() final {

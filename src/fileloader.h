@@ -253,7 +253,7 @@ class PropWriteStream
 				return;
 			}
 
-			write<uint16_t>(strLength);
+			write<uint16_t>(static_cast<uint16_t>(strLength));
 			reserve(strLength);
 			memcpy(buffer + size, str.c_str(), strLength);
 			size += strLength;

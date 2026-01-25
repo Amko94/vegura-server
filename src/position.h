@@ -67,7 +67,7 @@ struct Position
 	inline static int32_t getDistanceY(const Position& p1, const Position& p2) {
 		return std::abs(Position::getOffsetY(p1, p2));
 	}
-	inline static int16_t getDistanceZ(const Position& p1, const Position& p2) {
+	inline static int32_t getDistanceZ(const Position& p1, const Position& p2) {
 		return std::abs(Position::getOffsetZ(p1, p2));
 	}
 

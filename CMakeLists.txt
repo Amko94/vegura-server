@@ -44,7 +44,9 @@ endif ()
 link_directories(C:/vcpkg/installed/x64-windows/lib)
 
 add_subdirectory(src)
-add_executable(tfs ${tfs_SRC})
+add_executable(tfs ${tfs_SRC}
+        src/MonsterTaskManager.cpp
+        src/MonsterTaskManager.h)
 
 include_directories(${MYSQL_INCLUDE_DIR} ${LUA_INCLUDE_DIR} ${Boost_INCLUDE_DIRS} ${PUGIXML_INCLUDE_DIR} ${Crypto++_INCLUDE_DIR})
 target_link_libraries(tfs

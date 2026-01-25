@@ -35,6 +35,7 @@
 #include "monster.h"
 #include "scheduler.h"
 #include "databasetasks.h"
+#include "monsterTaskManager.h"
 
 extern Chat *g_chat;
 extern Game g_game;
@@ -42,6 +43,7 @@ extern Monsters g_monsters;
 extern ConfigManager g_config;
 extern Vocations g_vocations;
 extern Spells *g_spells;
+extern MonsterTaskManager *g_monster_task_manager;
 
 enum {
     EVENT_ID_LOADING = 1,
@@ -957,7 +959,9 @@ void LuaScriptInterface::registerFunctions() {
     lua_register(luaState, "getWaypointPositionByName", LuaScriptInterface::luaGetWaypointPositionByName);
 
 
-    lua_register(luaState, "getSpellBoostDefinitionsList", LuaScriptInterface::getSpellBoostDefinitionList);
+    lua_register(luaState, "getSpellBoostDefinitionsList", LuaScriptInterface::luaGetSpellBoostDefinitionList);
+    lua_register(luaState, "getMonsterTaskDefinitionList", LuaScriptInterface::luaGetMonsterTaskDefinitionList);
+    lua_register(luaState, "getMonsterTaskDefinitionById", LuaScriptInterface::luaGetMonsterTaskDefinitionById);
 
 
     //sendChannelMessage(channelId, type, message)
@@ -1206,6 +1210,7 @@ void LuaScriptInterface::registerFunctions() {
     registerEnum(CONST_ME_FERUMBRAS)
     registerEnum(CONST_ME_CONFETTI_HORIZONTAL)
     registerEnum(CONST_ME_CONFETTI_VERTICAL)
+    registerEnum(CONST_ME_SPELL_BOOST)
     registerEnum(CONST_ME_BLACKSMOKE)
     registerEnum(CONST_ME_REDSMOKE)
     registerEnum(CONST_ME_YELLOWSMOKE)
@@ -2025,12 +2030,24 @@ void LuaScriptInterface::registerFunctions() {
     registerClass("Player", "Creature", LuaScriptInterface::luaPlayerCreate);
     registerMetaMethod("Player", "__eq", LuaScriptInterface::luaUserdataCompare);
     registerMethod("Player", "isPlayer", LuaScriptInterface::luaPlayerIsPlayer);
+    registerMethod("Player", "getTaskPoints", LuaScriptInterface::luaGetTaskPoints);
     registerMethod("Player", "getSpellBoostLevels", LuaScriptInterface::luaGetPlayerSpellBoostLevels);
     registerMethod("Player", "upgradeSpellLevel", LuaScriptInterface::luaPlayerUpgradeSpellLevel);
     registerMethod("Player", "getUpgradeSpellPrice", LuaScriptInterface::luaPlayerGetUpgradeSpellPrice);
     registerMethod("Player", "getSpellBoostValue", LuaScriptInterface::luaPlayerGetSpellBoostValue);
     registerMethod("Player", "getGuid", LuaScriptInterface::luaPlayerGetGuid);
     registerMethod("Player", "getIp", LuaScriptInterface::luaPlayerGetIp);
+    registerMethod("Player", "hasActiveTask", LuaScriptInterface::luaPlayerHasActiveTask);
+    registerMethod("Player", "getPlayerMonsterTasks", LuaScriptInterface::luaGetPlayerMonsterTasks);
+    registerMethod("Player", "getActiveMonsterTask", LuaScriptInterface::luaGetActiveMonsterTask);
+
+    registerMethod("Player", "startMonsterTask", LuaScriptInterface::luaStartMonsterTask);
+    registerMethod("Player", "pauseMonsterTask", LuaScriptInterface::luaPauseMonsterTask);
+    registerMethod("Player", "resumeMonsterTask", LuaScriptInterface::luaResumeMonsterTask);
+    registerMethod("Player", "cancelMonsterTask", LuaScriptInterface::luaCancelMonsterTask);
+    registerMethod("Player", "updateMonsterTaskProgress", LuaScriptInterface::luaUpdateMonsterTaskProgress);
+    registerMethod("Player", "claimMonsterTaskReward", LuaScriptInterface::luaClaimMonsterTaskReward);
+    registerMethod("Player", "getPlayerMonsterTaskById", LuaScriptInterface::luaGetPlayerMonsterTaskById);
     registerMethod("Player", "getAccountId", LuaScriptInterface::luaPlayerGetAccountId);
     registerMethod("Player", "getLastLoginSaved", LuaScriptInterface::luaPlayerGetLastLoginSaved);
     registerMethod("Player", "getLastLogout", LuaScriptInterface::luaPlayerGetLastLogout);
@@ -4004,7 +4021,7 @@ int LuaScriptInterface::luaPlayerUpgradeSpellLevel(lua_State *L) {
 }
 
 
-int LuaScriptInterface::getSpellBoostDefinitionList(lua_State *L) {
+int LuaScriptInterface::luaGetSpellBoostDefinitionList(lua_State *L) {
     const auto &list = g_spells->getSpellBoostDefinitionList();
 
     lua_newtable(L);
@@ -4059,6 +4076,84 @@ int LuaScriptInterface::getSpellBoostDefinitionList(lua_State *L) {
 
         lua_rawseti(L, -2, index++);
     }
+
+    return 1;
+}
+
+int LuaScriptInterface::luaGetMonsterTaskDefinitionList(lua_State *L) {
+    const auto &list = g_monster_task_manager->getMonsterTaskDefinitionList();
+
+    lua_newtable(L);
+
+    int index = 1;
+    for (const auto &def: list) {
+        lua_newtable(L);
+
+        lua_pushinteger(L, def.id);
+        lua_setfield(L, -2, "id");
+
+        // name
+        lua_pushstring(L, def.name.c_str());
+        lua_setfield(L, -2, "taskName");
+
+        lua_pushinteger(L, def.category);
+        lua_setfield(L, -2, "category");
+
+        lua_pushinteger(L, def.experience);
+        lua_setfield(L, -2, "experience");
+
+        lua_newtable(L);
+        int m = 1;
+        for (const auto &monster: def.monsters) {
+            lua_newtable(L);
+
+            lua_pushstring(L, monster.name.c_str());
+            lua_setfield(L, -2, "name");
+
+            lua_pushinteger(L, monster.lookType);
+            lua_setfield(L, -2, "lookType");
+
+            lua_rawseti(L, -2, m++);
+        }
+        lua_setfield(L, -2, "monsters");
+
+        lua_rawseti(L, -2, index++);
+    }
+
+    return 1;
+}
+
+int LuaScriptInterface::luaGetMonsterTaskDefinitionById(lua_State *L) {
+    uint32_t taskId = getNumber<uint32_t>(L, 1);
+
+    MonsterTaskDefinition def =
+            g_monster_task_manager->getTaskDefinitionById(taskId);
+
+    if (def.id == 0) {
+        lua_pushnil(L);
+        return 1;
+    }
+
+    lua_newtable(L);
+
+    setField(L, "id", def.id);
+    setField(L, "name", def.name);
+    setField(L, "category", def.category);
+    setField(L, "experience", def.experience);
+
+    lua_newtable(L);
+
+    int index = 1;
+    for (const TaskMonster &monster: def.monsters) {
+        lua_newtable(L);
+
+        setField(L, "name", monster.name);
+        setField(L, "lookType", monster.lookType);
+
+        lua_rawseti(L, -2, index++);
+    }
+
+    lua_setfield(L, -2, "monsters");
 
     return 1;
 }
@@ -7047,14 +7142,360 @@ int LuaScriptInterface::luaPlayerCreate(lua_State *L) {
     return 1;
 }
 
+int LuaScriptInterface::luaGetTaskPoints(lua_State *L) {
+    Player *player = getUserdata<Player>(L, 1);
+    if (!player) {
+        lua_pushnil(L);
+        return 1;
+    }
+
+    uint32_t taskPoints = player->getPlayerTaskPoints(player->getGUID());
+
+    lua_pushinteger(L, taskPoints);
+    return 1;
+}
+
+
 int LuaScriptInterface::luaPlayerIsPlayer(lua_State *L) {
     // player:isPlayer()
     pushBoolean(L, getUserdata<const Player>(L, 1) != nullptr);
     return 1;
 }
 
+int LuaScriptInterface::luaPlayerHasActiveTask(lua_State *L) {
+    Player *player = getUserdata<Player>(L, 1);
+    bool result = g_monster_task_manager->hasActiveTask(player->getGUID());
+    pushBoolean(L, result);
+    return 1;
+}
+
+int LuaScriptInterface::luaGetPlayerMonsterTasks(lua_State *L) {
+    Player *player = getUserdata<Player>(L, 1);
+    if (!player) {
+        lua_pushnil(L);
+        return 1;
+    }
+
+    const auto tasks = g_monster_task_manager->getPlayerMonsterTasks(player->getGUID());
+
+    lua_newtable(L);
+
+    int index = 1;
+    for (const auto &task: tasks) {
+        lua_newtable(L);
+
+        lua_pushinteger(L, task.id);
+        lua_setfield(L, -2, "id");
+
+        lua_pushinteger(L, task.taskId);
+        lua_setfield(L, -2, "taskId");
+
+        lua_pushinteger(L, task.amount);
+        lua_setfield(L, -2, "amount");
+
+        lua_pushinteger(L, task.progress);
+        lua_setfield(L, -2, "progress");
+
+        lua_pushboolean(L, task.paused);
+        lua_setfield(L, -2, "paused");
+
+        lua_pushboolean(L, task.finished);
+        lua_setfield(L, -2, "finished");
+
+        lua_pushboolean(L, task.active);
+        lua_setfield(L, -2, "active");
+
+        lua_pushinteger(L, static_cast<lua_Integer>(task.startTime));
+        lua_setfield(L, -2, "startTime");
+
+        if (task.endTime != 0) {
+            lua_pushinteger(L, static_cast<lua_Integer>(task.endTime));
+        } else {
+            lua_pushnil(L);
+        }
+        lua_setfield(L, -2, "endTime");
+
+        lua_pushinteger(L, static_cast<lua_Integer>(task.rewardGold));
+        lua_setfield(L, -2, "rewardGold");
+
+        lua_pushinteger(L, static_cast<lua_Integer>(task.rewardExperience));
+        lua_setfield(L, -2, "rewardExperience");
+
+        lua_pushinteger(L, task.rewardTaskPoints);
+        lua_setfield(L, -2, "rewardTaskPoints");
+
+        lua_rawseti(L, -2, index++);
+    }
+
+    return 1;
+}
+
+int LuaScriptInterface::luaGetActiveMonsterTask(lua_State *L) {
+    Player *player = getUserdata<Player>(L, 1);
+    if (!player) {
+        lua_pushnil(L);
+        return 1;
+    }
+
+    PlayerMonsterTask task =
+            g_monster_task_manager->getActiveTask(player->getGUID());
+
+    if (task.id == 0) {
+        lua_pushnil(L);
+        return 1;
+    }
+
+    lua_newtable(L);
+
+    setField(L, "id", task.id);
+    setField(L, "taskId", task.taskId);
+    setField(L, "amount", task.amount);
+    setField(L, "progress", task.progress);
+    setField(L, "paused", task.paused);
+    setField(L, "active", task.active);
+    setField(L, "finished", task.finished);
+    setField(L, "startTime", static_cast<uint64_t>(task.startTime));
+    setField(L, "endTime", static_cast<uint64_t>(task.endTime));
+
+    setField(L, "rewardGold", task.rewardGold);
+    setField(L, "rewardExperience", task.rewardExperience);
+    setField(L, "rewardTaskPoints", task.rewardTaskPoints);
+
+    return 1;
+}
+
+int LuaScriptInterface::luaStartMonsterTask(lua_State *L) {
+    Player *player = getUserdata<Player>(L, 1);
+    if (!player) {
+        lua_pushboolean(L, false);
+        return 1;
+    }
+
+    uint32_t taskId = getNumber<uint32_t>(L, 2);
+    uint32_t amount = getNumber<uint32_t>(L, 3);
+
+    if (taskId == 0 || amount == 0) {
+        lua_pushboolean(L, false);
+        return 1;
+    }
+
+    StartTaskModel model;
+    model.playerId = player->getGUID();
+    model.taskId = taskId;
+    model.amount = amount;
+
+    bool success = g_monster_task_manager->startTask(model);
+
+    lua_pushboolean(L, success);
+    return 1;
+}
+
+int LuaScriptInterface::luaPauseMonsterTask(lua_State *L) {
+    Player *player = getUserdata<Player>(L, 1);
+    if (!player) {
+        lua_pushboolean(L, false);
+        return 1;
+    }
+
+    uint32_t taskId = getNumber<uint32_t>(L, 2);
+    if (taskId == 0) {
+        lua_pushboolean(L, false);
+        return 1;
+    }
+
+    bool success = g_monster_task_manager->pauseTask(
+        player->getGUID(),
+        taskId
+    );
+
+    lua_pushboolean(L, success);
+    return 1;
+}
+
+int LuaScriptInterface::luaResumeMonsterTask(lua_State *L) {
+    Player *player = getUserdata<Player>(L, 1);
+    if (!player) {
+        lua_pushboolean(L, false);
+        return 1;
+    }
+
+    uint32_t taskId = getNumber<uint32_t>(L, 2);
+    if (taskId == 0) {
+        lua_pushboolean(L, false);
+        return 1;
+    }
+
+    bool success = g_monster_task_manager->resumeTask(
+        player->getGUID(),
+        taskId
+    );
+
+    lua_pushboolean(L, success);
+    return 1;
+}
+
+
+int LuaScriptInterface::luaCancelMonsterTask(lua_State *L) {
+    Player *player = getUserdata<Player>(L, 1);
+    if (!player) {
+        lua_pushboolean(L, false);
+        return 1;
+    }
+
+    uint32_t taskId = getNumber<uint32_t>(L, 2);
+    if (taskId == 0) {
+        lua_pushboolean(L, false);
+        return 1;
+    }
+
+    bool success = g_monster_task_manager->cancelTask(
+        player->getGUID(),
+        taskId
+    );
+
+    lua_pushboolean(L, success);
+    return 1;
+}
+
+int LuaScriptInterface::luaClaimMonsterTaskReward(lua_State *L) {
+    Player *player = getUserdata<Player>(L, 1);
+    if (!player) {
+        lua_pushnil(L);
+        return 1;
+    }
+
+    const uint32_t playerTaskId = getNumber<uint32_t>(L, 2);
+    const std::string rewardTypeStr = getString(L, 3);
+
+    RewardType rewardType;
+    if (rewardTypeStr == "gold") {
+        rewardType = RewardType::Gold;
+    } else if (rewardTypeStr == "exp") {
+        rewardType = RewardType::Experience;
+    } else if (rewardTypeStr == "split") {
+        rewardType = RewardType::Split;
+    } else {
+        lua_newtable(L);
+        lua_pushboolean(L, false);
+        lua_setfield(L, -2, "success");
+        lua_pushstring(L, "invalid_reward_type");
+        lua_setfield(L, -2, "error");
+        return 1;
+    }
+
+    ClaimRewardResult result =
+            g_monster_task_manager->claimReward(
+                player->getGUID(),
+                playerTaskId,
+                rewardType
+            );
+
+    lua_newtable(L);
+
+    if (result.status != ClaimRewardStatus::Success) {
+        lua_pushboolean(L, false);
+        lua_setfield(L, -2, "success");
+
+        const char *errorStr = "unknown";
+
+        switch (result.status) {
+            case ClaimRewardStatus::TaskNotFound:
+                errorStr = "task_not_found";
+                break;
+            case ClaimRewardStatus::NotFinished:
+                errorStr = "not_finished";
+                break;
+            case ClaimRewardStatus::InvalidRewardType:
+                errorStr = "invalid_reward_type";
+                break;
+            case ClaimRewardStatus::DbError:
+                errorStr = "db_error";
+                break;
+            default:
+                break;
+        }
+
+        lua_pushstring(L, errorStr);
+        lua_setfield(L, -2, "error");
+        return 1;
+    }
+
+    lua_pushboolean(L, true);
+    lua_setfield(L, -2, "success");
+
+    lua_pushnumber(L, result.gold);
+    lua_setfield(L, -2, "gold");
+
+    lua_pushnumber(L, result.experience);
+    lua_setfield(L, -2, "experience");
+
+    lua_pushnumber(L, result.taskPoints);
+    lua_setfield(L, -2, "taskPoints");
+
+    lua_pushnumber(L, result.taskId);
+    lua_setfield(L, -2, "taskId");
+
+    lua_pushnumber(L, result.amount);
+    lua_setfield(L, -2, "amount");
+
+    return 1;
+}
+
+
+int LuaScriptInterface::luaUpdateMonsterTaskProgress(lua_State *L) {
+    Player *player = getUserdata<Player>(L, 1);
+    if (!player) {
+        lua_pushboolean(L, false);
+        return 1;
+    }
+
+    uint32_t taskId = getNumber<uint32_t>(L, 2);
+    uint32_t kills = lua_gettop(L) >= 3
+                         ? getNumber<uint32_t>(L, 3)
+                         : 1;
+
+    bool success = g_monster_task_manager->updateTaskProgress(
+        player->getGUID(),
+        taskId,
+        kills
+    );
+
+    lua_pushboolean(L, success);
+    return 1;
+}
+
+
+int LuaScriptInterface::luaGetPlayerMonsterTaskById(lua_State *L) {
+    Player *player = getUserdata<Player>(L, 1);
+    if (!player) {
+        lua_pushnil(L);
+        return 1;
+    }
+
+    uint32_t playerTaskId = getNumber<uint32_t>(L, 2);
+
+    PlayerMonsterTask task =
+            g_monster_task_manager->getPlayerTaskById(player->getGUID(), playerTaskId);
+
+    if (task.id == 0) {
+        lua_pushnil(L);
+        return 1;
+    }
+
+    lua_newtable(L);
+
+    setField(L, "gold", task.rewardGold);
+    setField(L, "exp", task.rewardExperience);
+    setField(L, "points", task.rewardTaskPoints);
+    setField(L, "finished", task.finished);
+    setField(L, "taskId", task.taskId);
+    setField(L, "amount", task.amount);
+
+    return 1;
+}
+
+
 int LuaScriptInterface::luaPlayerGetGuid(lua_State *L) {
-    // player:getGuid()
     Player *player = getUserdata<Player>(L, 1);
     if (player) {
         lua_pushnumber(L, player->getGUID());
