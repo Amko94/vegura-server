@@ -28,7 +28,8 @@ EXTENDED_ERROR_OPCODES = {
     RESUME_ERROR = 101,
     CLAIM_REWARD_ERROR_NO_FINISHED = 102,
     NO_ENOUGH_MONEY = 103,
-    MISSING_TOME_OF_SPELL_MASTERY = 104
+    MISSING_TOME_OF_SPELL_MASTERY = 104,
+    NO_PROTECT_ZONE = 105
 }
 
 local function handleStartTask(player, buffer)
@@ -44,7 +45,7 @@ local function handleStartTask(player, buffer)
     if TaskManager.startTask(player, taskId, amount) then
         player:sendExtendedOpcode(TASK_MANAGER_EXTENDED_OPCODES.START_TASK, "TASK_STARTED;" .. taskId .. ";" .. amount)
         player:sendTextMessage(MESSAGE_EVENT_ADVANCE, "Task started!")
-        TaskManager.sendTasksToClient(player)
+        TaskManager.sendPlayerTasksToClient(player)
     else
         player:sendCancelMessage("Failed to start task.")
     end
@@ -53,7 +54,7 @@ end
 local function handleRequestTaskList(player, buffer)
     print("[ExtendedOpcode] Request: Available tasks")
     TaskManager.sendAvailableTaskList(player)
-    TaskManager.sendTasksToClient(player)
+    TaskManager.sendPlayerTasksToClient(player)
 end
 
 local function handleResumeTask(player, buffer)
@@ -66,7 +67,7 @@ local function handleResumeTask(player, buffer)
 
     if TaskManager.resumeTask(player, taskId) then
         player:sendTextMessage(MESSAGE_INFO_DESCR, "Task resumed")
-        TaskManager.sendTasksToClient(player)
+        TaskManager.sendPlayerTasksToClient(player)
     else
         player:sendCancelMessage("Failed to resume task.")
     end
@@ -82,7 +83,7 @@ local function handlePauseTask(player, buffer)
 
     if TaskManager.pauseTask(player, taskId) then
         player:sendTextMessage(MESSAGE_INFO_DESCR, "Task paused")
-        TaskManager.sendTasksToClient(player)
+        TaskManager.sendPlayerTasksToClient(player)
     else
         player:sendCancelMessage("Failed to pause task.")
     end
@@ -98,7 +99,7 @@ local function handleCancelTask(player, buffer)
 
     if TaskManager.cancelTask(player, taskId) then
         player:sendTextMessage(MESSAGE_STATUS_WARNING, "Your task has been canceled")
-        TaskManager.sendTasksToClient(player)
+        TaskManager.sendPlayerTasksToClient(player)
     else
         player:sendCancelMessage("Failed to cancel task.")
     end
@@ -106,7 +107,6 @@ end
 
 local function handleTaskRewardRequest(player, buffer)
     local taskId = tonumber(buffer)
-    print(taskId, '<-- TASK ID')
 
     if not taskId then
         player:sendCancelMessage("Invalid task data received.")

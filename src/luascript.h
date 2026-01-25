@@ -599,7 +599,11 @@ protected:
     static int luaTableCreate(lua_State *L);
 
     // Game
-    static int getSpellBoostDefinitionList(lua_State *L);
+    static int luaGetSpellBoostDefinitionList(lua_State *L);
+
+    static int luaGetMonsterTaskDefinitionList(lua_State *L);
+
+    static int luaGetMonsterTaskDefinitionById(lua_State *L);
 
     static int luaGameGetSpectators(lua_State *L);
 
@@ -960,11 +964,35 @@ protected:
     // Player
     static int luaPlayerCreate(lua_State *L);
 
+    static int luaGetTaskPoints(lua_State *L);
+
     static int luaPlayerIsPlayer(lua_State *L);
+
+    static int luaPlayerHasActiveTask(lua_State *L);
+
+    static int luaGetPlayerMonsterTasks(lua_State *L);
+
+    static int luaGetActiveMonsterTask(lua_State *L);
+
+    static int luaStartMonsterTask(lua_State *L);
+
+    static int luaPauseMonsterTask(lua_State *L);
+
+    static int luaResumeMonsterTask(lua_State *L);
+
+    static int luaCancelMonsterTask(lua_State *L);
+
+    static int luaClaimMonsterTaskReward(lua_State *L);
+
+    static int luaUpdateMonsterTaskProgress(lua_State *L);
+
+    static int luaGetPlayerMonsterTaskById(lua_State *L);
+
 
     static int luaGetPlayerSpellBoostLevels(lua_State *L);
 
     static int luaPlayerGetUpgradeSpellPrice(lua_State *L);
+
     static int luaPlayerGetSpellBoostValue(lua_State *L);
 
     static int luaPlayerUpgradeSpellLevel(lua_State *L);
@@ -1622,7 +1650,6 @@ public:
 private:
     void executeTimerEvent(uint32_t eventIndex);
 
-    //
     std::unordered_map<uint32_t, LuaTimerEventDesc> timerEvents;
     std::unordered_map<uint32_t, Combat *> combatMap;
     std::unordered_map<uint32_t, AreaCombat *> areaMap;

@@ -1,65 +1,60 @@
 function onKill(creature, target)
-    if not creature:isPlayer() then
+    if not creature:isPlayer() or not target:isMonster() then
         return true
     end
 
     local player = creature
-    if not target:isMonster() then
+
+    local activeTask = player:getActiveMonsterTask()
+    if not activeTask then
         return true
     end
 
-    local activeTasks = TaskManager.getActiveTasks(player)
-    if #activeTasks == 0 then
+    local taskDef = getMonsterTaskDefinitionById(activeTask.taskId)
+    if not taskDef then
         return true
     end
 
     local killedName = target:getName():lower()
-    local function sendProgressMessage(taskName, remaining)
-        local message = string.format("[%s] Progress: %d monsters left to kill", taskName, remaining)
-        player:sendTextMessage(MESSAGE_STATUS_CONSOLE_ORANGE, message)
-    end
 
-    for _, activeTask in ipairs(activeTasks) do
-        if activeTask.paused == 1 then
-            goto continue
-        end
-
-        local taskDef = TaskManager.getTaskDefinitionById(activeTask.taskId)
-        if not taskDef then
-            goto continue
-        end
-
-        local monsterFound = false
-        for _, monsterName in ipairs(taskDef.monsterNames) do
-            if monsterName:lower() == killedName then
-                monsterFound = true
-                break
-            end
-        end
-
-        if monsterFound then
-
-            TaskManager.updateTaskProgress(player, activeTask.taskId, 1)
-
-            local newProgress = activeTask.progress + 1
-            local remaining = activeTask.amount - newProgress
-
-            player:sendExtendedOpcode(1, "TASK_UPDATED;" .. activeTask.taskId .. ";" .. newProgress .. ";" .. activeTask.amount)
-
-            if newProgress == activeTask.amount then
-                player:sendTextMessage(MESSAGE_EVENT_ADVANCE, "You have completed the task! Claim your reward!")
-                TaskManager.updateMaxAmount(player, activeTask.taskId)
-            end
-
-            if newProgress <= activeTask.amount then
-                sendProgressMessage(taskDef.taskName, remaining)
-            end
-
+    local matches = false
+    for _, monster in ipairs(taskDef.monsters) do
+        if monster.name:lower() == killedName then
+            matches = true
             break
         end
-
-        :: continue ::
     end
 
+    if not matches then
+        return true
+    end
+
+    local success = player:updateMonsterTaskProgress(activeTask.taskId, 1)
+    if not success then
+        return true
+    end
+
+    local updatedTask = player:getActiveMonsterTask()
+
+    if not updatedTask then
+        player:sendTextMessage(
+                MESSAGE_EVENT_ADVANCE,
+                "You have completed the task! Claim your reward!"
+        )
+        TaskManager.sendPlayerTasksToClient(player)
+        return true
+    end
+
+    local remaining = updatedTask.amount - updatedTask.progress
+
+    player:sendTextMessage(
+            MESSAGE_STATUS_CONSOLE_ORANGE,
+            string.format("[%s] %d monsters left to kill",
+                    taskDef.name,
+                    remaining
+            )
+    )
+
+    TaskManager.sendPlayerTasksToClient(player)
     return true
 end
