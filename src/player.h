@@ -85,6 +85,15 @@ enum tradestate_t : uint8_t {
     TRADE_TRANSFER,
 };
 
+enum transaction_type: uint8_t {
+    EARN,
+    SPEND,
+    TRANSFER_IN,
+    TRANSFER_OUT,
+    CONVERT_TO_COINS,
+    CONVERT_TO_POINTS
+};
+
 struct VIPEntry {
     VIPEntry(uint32_t guid, const std::string &name)
         : guid(guid), name(name) {
@@ -123,6 +132,7 @@ struct PlayerSpellBoostLevel {
 
 typedef std::map<uint32_t, uint32_t> MuteCountMap;
 
+
 #define PLAYER_MAX_SPEED 1500
 #define PLAYER_MIN_SPEED 10
 
@@ -136,6 +146,14 @@ public:
     Player(const Player &) = delete;
 
     uint32_t getPlayerTaskPoints(uint32_t playerId);
+
+    bool convertVeguraCoinsToPoints(Item *coinItem);;
+
+    bool convertVeguraPointsToCoins(uint32_t amount);;
+
+    uint32_t getPlayerVeguraPoints() const;;
+
+    bool transferVeguraPoints(uint32_t amount, uint32_t playerTargetId);
 
     Player &operator=(const Player &) = delete;
 

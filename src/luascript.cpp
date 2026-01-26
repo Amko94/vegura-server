@@ -2031,6 +2031,9 @@ void LuaScriptInterface::registerFunctions() {
     registerMetaMethod("Player", "__eq", LuaScriptInterface::luaUserdataCompare);
     registerMethod("Player", "isPlayer", LuaScriptInterface::luaPlayerIsPlayer);
     registerMethod("Player", "getTaskPoints", LuaScriptInterface::luaGetTaskPoints);
+    registerMethod("Player", "convertVeguraCoinsToPoints", LuaScriptInterface::luaConvertVeguraCoinsToPoints);
+    registerMethod("Player", "transferVeguraPoints", LuaScriptInterface::luaTransferVeguraPoints);
+    registerMethod("Player", "convertVeguraPointsToCoins", LuaScriptInterface::luaConvertVeguraCoinsToPoints);
     registerMethod("Player", "getSpellBoostLevels", LuaScriptInterface::luaGetPlayerSpellBoostLevels);
     registerMethod("Player", "upgradeSpellLevel", LuaScriptInterface::luaPlayerUpgradeSpellLevel);
     registerMethod("Player", "getUpgradeSpellPrice", LuaScriptInterface::luaPlayerGetUpgradeSpellPrice);
@@ -7152,6 +7155,55 @@ int LuaScriptInterface::luaGetTaskPoints(lua_State *L) {
     uint32_t taskPoints = player->getPlayerTaskPoints(player->getGUID());
 
     lua_pushinteger(L, taskPoints);
+    return 1;
+}
+
+int LuaScriptInterface::luaConvertVeguraCoinsToPoints(lua_State *L) {
+    Player *player = getUserdata<Player>(L, 1);
+    Item *item = getUserdata<Item>(L, 2);
+
+    if (!player || !item) {
+        lua_pushboolean(L, false);
+        return 1;
+    }
+
+    bool success = player->convertVeguraCoinsToPoints(item);
+    lua_pushboolean(L, success);
+    return 1;
+}
+
+int LuaScriptInterface::luaConvertVeguraPointsToCoins(lua_State *L) {
+    Player *player = getUserdata<Player>(L, 1);
+    uint32_t coinAmount = getNumber<uint32_t>(L, 2);
+
+    if (!player || coinAmount == 0) {
+        lua_pushboolean(L, false);
+        return 1;
+    }
+
+    bool success = player->convertVeguraPointsToCoins(coinAmount);
+    lua_pushboolean(L, success);
+    return 1;
+}
+
+int LuaScriptInterface::luaTransferVeguraPoints(lua_State *L) {
+    Player *player = getUserdata<Player>(L, 1);
+    uint32_t amount = getNumber<uint32_t>(L, 2);
+    std::string targetName = getString(L, 3);
+
+    if (!player || amount == 0 || targetName.empty()) {
+        lua_pushboolean(L, false);
+        return 1;
+    }
+
+    uint32_t targetGuid = IOLoginData::getGuidByName(targetName);
+    if (targetGuid == 0) {
+        lua_pushboolean(L, false);
+        return 1;
+    }
+
+    bool success = player->transferVeguraPoints(amount, targetGuid);
+    lua_pushboolean(L, success);
     return 1;
 }
 

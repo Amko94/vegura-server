@@ -966,6 +966,10 @@ protected:
 
     static int luaGetTaskPoints(lua_State *L);
 
+    static int luaConvertVeguraCoinsToPoints(lua_State *L);
+    static int luaConvertVeguraPointsToCoins(lua_State *L);
+    static int luaTransferVeguraPoints(lua_State *L);
+
     static int luaPlayerIsPlayer(lua_State *L);
 
     static int luaPlayerHasActiveTask(lua_State *L);

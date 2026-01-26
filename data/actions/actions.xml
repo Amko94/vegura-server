@@ -619,5 +619,6 @@
 
     <!-- Custom Vegura -->
     <action itemid="7503" script="spellbooster/tome-of-spell-mastery.lua"/>
+    <action itemid="7504" script="veguracoin/vegura-coin.lua"/>
 
 </actions>

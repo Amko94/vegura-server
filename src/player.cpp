@@ -202,6 +202,200 @@ uint32_t Player::getPlayerTaskPoints(uint32_t playerId) {
     return result->getNumber<uint32_t>("TaskPoints");
 }
 
+bool Player::convertVeguraCoinsToPoints(Item *coinItem) {
+    constexpr uint32_t POINTS = 10;
+    constexpr uint16_t VEGURA_COIN_ID = 7504;
+
+    if (!coinItem || coinItem->getID() != VEGURA_COIN_ID) {
+        return false;
+    }
+
+    Database *db = Database::getInstance();
+    DBTransaction tx;
+    if (!tx.begin()) {
+        return false;
+    }
+
+    const uint32_t balanceBefore = getPlayerVeguraPoints();
+    const uint32_t balanceAfter = balanceBefore + POINTS;
+
+    std::ostringstream q1;
+    q1 << "UPDATE players "
+            << "SET vegurapoints = vegurapoints + " << POINTS
+            << " WHERE id = " << getGUID();
+
+    if (!db->executeQuery(q1.str())) {
+        return false;
+    }
+
+    std::ostringstream q2;
+    q2 << "INSERT INTO veguratransactions "
+            << "(playerid, type, amount, balancebefore, balanceafter, createdat) VALUES ("
+            << getGUID() << ", "
+            << static_cast<int>(transaction_type::CONVERT_TO_POINTS) << ", "
+            << POINTS << ", "
+            << balanceBefore << ", "
+            << balanceAfter << ", NOW())";
+
+    if (!db->executeQuery(q2.str())) {
+        return false;
+    }
+
+    if (g_game.internalRemoveItem(coinItem, 1) != RETURNVALUE_NOERROR) {
+        return false;
+    }
+
+    return tx.commit();
+}
+
+
+bool Player::convertVeguraPointsToCoins(uint32_t coinAmount) {
+    if (coinAmount == 0) {
+        return false;
+    }
+
+    constexpr uint16_t VEGURA_COIN_ID = 7504;
+    constexpr uint32_t POINTS_PER_COIN = 10;
+
+    const uint32_t removeAmount = coinAmount * POINTS_PER_COIN;
+
+    Database *db = Database::getInstance();
+    DBTransaction tx;
+    if (!tx.begin()) {
+        return false;
+    }
+
+
+    const uint32_t balanceBefore = getPlayerVeguraPoints();
+    if (balanceBefore < removeAmount) {
+        return false;
+    }
+    const uint32_t balanceAfter = balanceBefore - removeAmount;
+
+    std::ostringstream q1;
+    q1 << "UPDATE players "
+            << "SET vegurapoints = vegurapoints - " << removeAmount
+            << " WHERE id = " << getGUID();
+
+    if (!db->executeQuery(q1.str())) {
+        return false;
+    }
+
+    std::ostringstream q2;
+    q2 << "INSERT INTO veguratransactions "
+            << "(playerid, type, amount, balancebefore, balanceafter, createdat) VALUES ("
+            << getGUID() << ", "
+            << static_cast<int>(transaction_type::CONVERT_TO_COINS) << ", "
+            << removeAmount << ", "
+            << balanceBefore << ", "
+            << balanceAfter << ", NOW())";
+
+    if (!db->executeQuery(q2.str())) {
+        return false;
+    }
+
+    Item *coin = Item::CreateItem(VEGURA_COIN_ID, coinAmount);
+    if (!coin || !g_game.internalAddItem(this, coin, INDEX_WHEREEVER, FLAG_NOLIMIT)) {
+        return false;
+    }
+
+    return tx.commit();
+}
+
+uint32_t Player::getPlayerVeguraPoints() const {
+    Database *db = Database::getInstance();
+
+    std::ostringstream query;
+    query << "SELECT VeguraPoints FROM players WHERE id = " << getGUID() << " LIMIT 1";
+
+    DBResult_ptr result = db->storeQuery(query.str());
+    if (!result) {
+        return 0;
+    }
+
+    return result->getNumber<uint32_t>("VeguraPoints");
+}
+
+
+bool Player::transferVeguraPoints(uint32_t amount, uint32_t targetGuid) {
+    if (amount == 0) {
+        return false;
+    }
+
+    if (getGUID() == targetGuid) {
+        return false;
+    }
+
+    Database *db = Database::getInstance();
+    DBTransaction tx;
+    if (!tx.begin()) {
+        return false;
+    }
+
+    const uint32_t senderBefore = getPlayerVeguraPoints();
+    if (senderBefore < amount) {
+        return false;
+    }
+    const uint32_t senderAfter = senderBefore - amount;
+
+    std::ostringstream s;
+    s << "SELECT vegurapoints FROM players WHERE id = " << targetGuid << " LIMIT 1";
+    DBResult_ptr res = db->storeQuery(s.str());
+    if (!res) {
+        return false;
+    }
+
+    const uint32_t receiverBefore = res->getNumber<uint32_t>("vegurapoints");
+    const uint32_t receiverAfter = receiverBefore + amount;
+
+    std::ostringstream q1;
+    q1 << "UPDATE players SET vegurapoints = vegurapoints - " << amount
+            << " WHERE id = " << getGUID();
+
+    if (!db->executeQuery(q1.str())) {
+        return false;
+    }
+
+    std::ostringstream q2;
+    q2 << "UPDATE players SET vegurapoints = vegurapoints + " << amount
+            << " WHERE id = " << targetGuid;
+
+    if (!db->executeQuery(q2.str())) {
+        return false;
+    }
+
+    std::ostringstream q3;
+    q3 << "INSERT INTO veguratransactions "
+            << "(playerid, type, amount, referenceplayerid, balancebefore, balanceafter, createdat) VALUES ("
+            << getGUID() << ", "
+            << static_cast<int>(transaction_type::TRANSFER_OUT) << ", "
+            << amount << ", "
+            << targetGuid << ", "
+            << senderBefore << ", "
+            << senderAfter << ", NOW())";
+
+    if (!db->executeQuery(q3.str())) {
+        return false;
+    }
+
+    std::ostringstream q4;
+    q4 << "INSERT INTO veguratransactions "
+            << "(playerid, type, amount, referenceplayerid, balancebefore, balanceafter, createdat) VALUES ("
+            << targetGuid << ", "
+            << static_cast<int>(transaction_type::TRANSFER_IN) << ", "
+            << amount << ", "
+            << getGUID() << ", "
+            << receiverBefore << ", "
+            << receiverAfter << ", NOW())";
+
+    if (!db->executeQuery(q4.str())) {
+        return false;
+    }
+
+    return tx.commit();
+}
+
+
 bool Player::loadPlayerSpellBoostLevels(uint32_t playerId) {
     Database *db = Database::getInstance();
 

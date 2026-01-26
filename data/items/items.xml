@@ -2127,7 +2127,7 @@
     </item>
     <item id="2149" article="a" name="small emerald">
         <attribute key="weight" value="10"/>
-    </item>
+     </item>
     <item id="2150" article="a" name="small amethyst">
         <attribute key="weight" value="10"/>
     </item>
@@ -13107,6 +13107,10 @@
     </item>
     <item id="7503" name="tome of spell mastery">
         <attribute key="weight" value="12"/>
+    </item>
+	
+	 <item id="7504" name="vegura coin">
+        <attribute key="weight" value="0.20"/>
     </item>
 
 </items>
