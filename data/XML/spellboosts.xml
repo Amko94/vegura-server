@@ -1,116 +1,525 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <spellboosts>
-    <spell id="1" name="Energy Strike" requiredLevel="12" words="exori vis" group="1">
+    <spell id="1" name="Ethereal Spear" words="exori con" requiredLevel="23" group="1">
         <vocations>
-            <vocation id="1"/>
-            <vocation id="2"/>
-            <vocation id="5"/>
-            <vocation id="6"/>
+            <vocation id="3"/>
+            <vocation id="7"/>
         </vocations>
         <levels>
-            <level index="1" type="1" value="5" description="Increase Damage for 5%"/>
-            <level index="2" type="3" value="10" description="Increase Damage for 10%"/>
-            <level index="3" type="1" value="10" description="Reduce Mana Cost for 10%"/>
-            <level index="4" type="3" value="15" description="Increase Damage for 15%"/>
+            <level index="1" type="3" value="10" description="Increase Damage for 10%"/>
+            <level index="2" type="1" value="25" description="Reduce Mana Cost for 25%"/>
+            <level index="3" type="3" value="25" description="Increase Damage for 25%"/>
         </levels>
     </spell>
 
-    <spell id="2" name="Intense Healing" requiredLevel="11" words="exura gran" group="2">
-        <vocations>
-            <vocation id="1"/>
-            <vocation id="2"/>
-            <vocation id="5"/>
-            <vocation id="6"/>
-        </vocations>
-        <levels>
-            <level index="1" type="7" value="5" description="Increase Healing for 5%"/>
-            <level index="2" type="7" value="10" description="Increase Healing for 10%"/>
-            <level index="3" type="1" value="10" description="Reduce Mana Cost for 10%"/>
-            <level index="4" type="1" value="15" description="Reduce Mana Cost for 15%"/>
-        </levels>
-    </spell>
 
-    <spell id="3" name="Berserk" requiredLevel="35" words="exori" group="1">
+    <spell id="2" name="Fierce Berserk" words="exori gran" requiredLevel="70" group="1">
         <vocations>
             <vocation id="4"/>
             <vocation id="8"/>
         </vocations>
         <levels>
-            <level index="1" type="3" value="5" description="Increase Damage for 5%"/>
-            <level index="2" type="3" value="8" description="Increase Damage for 8%"/>
-            <level index="3" type="1" value="10" description="Reduce Mana Cost for 10%"/>
-            <level index="5" type="10" value="1" description="Increase Area of Effect for 1 Tile"/>
+            <level index="1" type="3" value="10" description="Increase Damage for 10%"/>
+            <level index="2" type="1" value="11.75" description="Reduce Mana Cost for 11.75%"/>
+            <level index="3" type="3" value="20" description="Increase Damage for 20%"/>
         </levels>
     </spell>
 
-    <spell id="4" name="Conjure Arrow" requiredLevel="13" words="exevo con" group="4">
-        <vocations>
-            <vocation id="3"/>
-            <vocation id="7"/>
-        </vocations>
 
-        <levels>
-            <level index="1" type="1" value="10" description="Reduce Mana Cost for 10%"/>
-            <level index="2" type="11" value="5" description="Increase Conjure Amount for 100%"/>
-        </levels>
-    </spell>
-
-    <spell id="5" name="Sudden Death" requiredLevel="45" words="adori vita vis" group="4">
+    <spell id="3" name="Fire Wave" words="exevo flam hur" requiredLevel="18" group="1">
         <vocations>
             <vocation id="1"/>
             <vocation id="5"/>
         </vocations>
-
         <levels>
-            <level index="1" type="1" value="10" description="Reduce Mana Cost for 10%"/>
-            <level index="2" type="11" value="5" description="Increase Conjure Amount for 100%"/>
+            <level index="1" type="3" value="10" description="Increase Damage for 10%"/>
+            <level index="2" type="1" value="11.75" description="Reduce Mana Cost for 11.75%"/>
+            <level index="3" type="3" value="20" description="Increase Damage for 20%"/>
         </levels>
     </spell>
 
-    <spell id="6" name="Ethereal Spear" requiredLevel="23" words="exori con" group="1">
+
+    <spell id="4" name="Energy Wave" words="exevo mort hur" requiredLevel="38" group="1">
         <vocations>
-            <vocation id="3"/>
-            <vocation id="7"/>
+            <vocation id="1"/>
+            <vocation id="5"/>
         </vocations>
-
         <levels>
-            <level index="1" type="3" value="5" description="Increase Damage for 5%"/>
-            <level index="2" type="3" value="10" description="Increase Damage for 10%"/>
-            <level index="3" type="1" value="15" description="Reduce Mana Cost for 15%"/>
-            <level index="4" type="3" value="15" description="Increase Damage for 15%"/>
+            <level index="1" type="3" value="12" description="Increase Damage for 12%"/>
+            <level index="2" type="1" value="10" description="Reduce Mana Cost for 10%"/>
+            <level index="3" type="3" value="20" description="Increase Damage for 20%"/>
         </levels>
     </spell>
 
-    <spell id="7" name="Haste" requiredLevel="14" words="utani hur" group="3">
+
+    <spell id="5" name="Haste" words="utani hur" requiredLevel="14" group="3">
+        <vocations>
+            <vocation id="1"/>
+            <vocation id="5"/>
+        </vocations>
+        <levels>
+            <level index="1" type="4" value="8" description="Increase Speed for 8%"/>
+            <level index="2" type="1" value="16.5" description="Reduce Mana Cost for 16.5%"/>
+            <level index="3" type="4" value="15" description="Increase Speed for 15%"/>
+        </levels>
+    </spell>
+
+
+    <spell id="6" name="Strong Haste" words="utani gran hur" requiredLevel="20" group="3">
         <vocations>
             <vocation id="1"/>
             <vocation id="2"/>
-            <vocation id="3"/>
-            <vocation id="4"/>
             <vocation id="5"/>
             <vocation id="6"/>
-            <vocation id="7"/>
-            <vocation id="8"/>
         </vocations>
-
         <levels>
             <level index="1" type="4" value="5" description="Increase Speed for 5%"/>
-            <level index="2" type="4" value="10" description="Increase Speed for 10%"/>
-            <level index="3" type="1" value="10" description="Reduce Mana Cost for 10%"/>
-            <level index="4" type="2" value="20" description="Increase Duration for 20%"/>
+            <level index="2" type="1" value="15" description="Reduce Mana Cost for 15%"/>
+            <level index="3" type="4" value="10" description="Increase Speed for 10%"/>
         </levels>
     </spell>
 
-    <spell id="8" name="Whirlwind Throw" requiredLevel="15" words="exori hur" group="1">
+
+    <spell id="7" name="Poison Storm" words="exori con" requiredLevel="50" group="1">
+        <vocations>
+            <vocation id="2"/>
+            <vocation id="6"/>
+        </vocations>
+        <levels>
+            <level index="1" type="3" value="8" description="Increase Damage for 8%"/>
+            <level index="2" type="1" value="10" description="Reduce Mana Cost for 10%"/>
+            <level index="3" type="3" value="15" description="Increase Damage for 15%"/>
+        </levels>
+    </spell>
+
+
+    <spell id="8" name="Whirlwind Throw" words="exori hur" requiredLevel="15" group="1">
         <vocations>
             <vocation id="4"/>
             <vocation id="8"/>
         </vocations>
-
         <levels>
-            <level index="1" type="3" value="15" description="Increase Damage for 15%"/>
-            <level index="2" type="9" value="10" description="Reduce Cooldown for 10%"/>
-            <level index="3" type="5" value="1" description="Increase Range for 1 Tile"/>
+            <level index="1" type="3" value="10" description="Increase Damage for 10%"/>
+            <level index="2" type="1" value="25" description="Reduce Mana Cost for 25%"/>
+            <level index="3" type="3" value="25" description="Increase Damage for 25%"/>
+        </levels>
+    </spell>
+
+
+    <spell id="9" name="Magic Shield" words="utamo vita" requiredLevel="14" group="3">
+        <vocations>
+            <vocation id="1"/>
+            <vocation id="2"/>
+            <vocation id="5"/>
+            <vocation id="6"/>
+        </vocations>
+        <levels>
+            <level index="1" type="2" value="100" description="Increase Duration for 100%"/>
+        </levels>
+    </spell>
+
+
+    <spell id="10" name="Invisibility" words="utana vid" requiredLevel="35" group="3">
+        <vocations>
+            <vocation id="1"/>
+            <vocation id="2"/>
+            <vocation id="3"/>
+            <vocation id="5"/>
+            <vocation id="6"/>
+            <vocation id="7"/>
+        </vocations>
+        <levels>
+            <level index="1" type="2" value="100" description="Increase Duration for 100%"/>
+        </levels>
+    </spell>
+
+
+    <spell id="11" name="Summon Creature" words="utevo res" requiredLevel="25" group="3">
+        <vocations>
+            <vocation id="1"/>
+            <vocation id="2"/>
+            <vocation id="5"/>
+            <vocation id="6"/>
+        </vocations>
+        <levels>
+            <level index="1" type="6" value="50" description="Increase Monster Summon for 50%"/>
+        </levels>
+    </spell>
+
+
+    <spell id="12" name="Light Healing" words="exura" requiredLevel="9" group="2">
+        <vocations>
+            <vocation id="1"/>
+            <vocation id="2"/>
+            <vocation id="3"/>
+            <vocation id="4"/>
+            <vocation id="5"/>
+            <vocation id="6"/>
+            <vocation id="7"/>
+            <vocation id="8"/>
+        </vocations>
+        <levels>
+            <level index="1" type="1" value="60" description="Reduce Mana Cost for 60%"/>
+        </levels>
+    </spell>
+
+
+    <spell id="13" name="Mass Healing" words="exura gran mas res" requiredLevel="36" group="2">
+        <vocations>
+            <vocation id="2"/>
+            <vocation id="6"/>
+        </vocations>
+        <levels>
+            <level index="1" type="1" value="15" description="Reduce Mana Cost for 15%"/>
+            <level index="2" type="7" value="15" description="Increase Healing for 15%"/>
+        </levels>
+    </spell>
+
+
+    <spell id="14" name="Ultimate Healing" words="exura vita" requiredLevel="20" group="2">
+        <vocations>
+            <vocation id="1"/>
+            <vocation id="2"/>
+            <vocation id="3"/>
+            <vocation id="5"/>
+            <vocation id="6"/>
+            <vocation id="7"/>
+        </vocations>
+        <levels>
+            <level index="1" type="1" value="10" description="Reduce Mana Cost for 10%"/>
+            <level index="2" type="1" value="20" description="Reduce Mana Cost for 20%"/>
+            <level index="3" type="1" value="30" description="Reduce Mana Cost for 30%"/>
+        </levels>
+    </spell>
+
+
+    <spell id="15" name="Intense Healing" words="exura gran" requiredLevel="11" group="2">
+        <vocations>
+            <vocation id="1"/>
+            <vocation id="2"/>
+            <vocation id="3"/>
+            <vocation id="5"/>
+            <vocation id="6"/>
+            <vocation id="7"/>
+        </vocations>
+        <levels>
+            <level index="1" type="1" value="10" description="Reduce Mana Cost for 10%"/>
+            <level index="2" type="1" value="25" description="Reduce Mana Cost for 25%"/>
+        </levels>
+    </spell>
+
+
+    <spell id="16" name="Heal Friend" words="exura sio" requiredLevel="18" group="2">
+        <vocations>
+            <vocation id="2"/>
+            <vocation id="6"/>
+        </vocations>
+        <levels>
+            <level index="1" type="1" value="10" description="Reduce Mana Cost for 10%"/>
+            <level index="2" type="1" value="20" description="Reduce Mana Cost for 20%"/>
+        </levels>
+    </spell>
+
+
+    <spell id="17" name="Berserk" words="exori" requiredLevel="35" group="1">
+        <vocations>
+            <vocation id="4"/>
+            <vocation id="8"/>
+        </vocations>
+        <levels>
+            <level index="1" type="3" value="10" description="Increase Damage for 10%"/>
+            <level index="2" type="1" value="8.5" description="Reduce Mana Cost for 8.5%"/>
+            <level index="3" type="9" value="10" description="Reduce Cooldown for 10%"/>
+            <level index="4" type="3" value="25" description="Increase Damage for 25%"/>
+        </levels>
+    </spell>
+
+
+    <spell id="18" name="Challenge" words="exeta res" requiredLevel="20" group="3">
+        <vocations>
+            <vocation id="4"/>
+            <vocation id="8"/>
+        </vocations>
+        <levels>
+            <level index="1" type="10" value="10" description="Increase Area of Effect for 10%"/>
+            <level index="2" type="1" value="16.5" description="Reduce Mana Cost for 16.5%"/>
+            <level index="3" type="10" value="20" description="Increase Area of Effect for 20%"/>
+        </levels>
+    </spell>
+
+
+    <spell id="19" name="Energy Beam" words="exevo vis lux" requiredLevel="23" group="1">
+        <vocations>
+            <vocation id="1"/>
+            <vocation id="5"/>
+        </vocations>
+        <levels>
+            <level index="1" type="1" value="20" description="Reduce Mana Cost for 20%"/>
+            <level index="2" type="3" value="12" description="Increase Damage for 12%"/>
+        </levels>
+    </spell>
+
+    <spell id="21" name="Heavy Magic Missile" words="adori gran" requiredLevel="25" group="4">
+        <vocations>
+            <vocation id="1"/>
+            <vocation id="2"/>
+            <vocation id="3"/>
+            <vocation id="5"/>
+            <vocation id="6"/>
+            <vocation id="7"/>
+        </vocations>
+        <levels>
+            <level index="1" type="1" value="28.6" description="Reduce Mana Cost for 28.6%"/>
+            <level index="2" type="8" value="100" description="Increase Rune Amount for 100%"/>
+        </levels>
+    </spell>
+
+
+    <spell id="22" name="Avalanche" words="adori mas frigo" requiredLevel="30" group="4">
+        <vocations>
+            <vocation id="2"/>
+            <vocation id="6"/>
+        </vocations>
+        <levels>
+            <level index="1" type="1" value="24.5" description="Reduce Mana Cost for 24.5%"/>
+            <level index="2" type="8" value="100" description="Increase Rune Amount for 100%"/>
+        </levels>
+    </spell>
+
+
+    <spell id="23" name="Great Fireball" words="adori gran flam" requiredLevel="23" group="4">
+        <vocations>
+            <vocation id="1"/>
+            <vocation id="2"/>
+            <vocation id="5"/>
+            <vocation id="6"/>
+        </vocations>
+        <levels>
+            <level index="1" type="1" value="27" description="Reduce Mana Cost for 27%"/>
+            <level index="2" type="8" value="100" description="Increase Rune Amount for 100%"/>
+        </levels>
+    </spell>
+
+
+    <spell id="24" name="Explosion" words="adevo mas hur" requiredLevel="31" group="4">
+        <vocations>
+            <vocation id="1"/>
+            <vocation id="2"/>
+            <vocation id="5"/>
+            <vocation id="6"/>
+        </vocations>
+        <levels>
+            <level index="1" type="1" value="23" description="Reduce Mana Cost for 23%"/>
+            <level index="2" type="8" value="100" description="Increase Rune Amount for 100%"/>
+        </levels>
+    </spell>
+
+
+    <spell id="25" name="Sudden Death" words="adori vita vis" requiredLevel="45" group="4">
+        <vocations>
+            <vocation id="1"/>
+            <vocation id="5"/>
+        </vocations>
+        <levels>
+            <level index="1" type="1" value="24" description="Reduce Mana Cost for 24%"/>
+            <level index="2" type="8" value="100" description="Increase Rune Amount for 100%"/>
+        </levels>
+    </spell>
+
+
+    <spell id="26" name="Intense Healing" words="adura gran" requiredLevel="15" group="4">
+        <vocations>
+            <vocation id="2"/>
+            <vocation id="6"/>
+        </vocations>
+        <levels>
+            <level index="1" type="1" value="25" description="Reduce Mana Cost for 25%"/>
+            <level index="2" type="8" value="100" description="Increase Rune Amount for 100%"/>
+        </levels>
+    </spell>
+
+
+    <spell id="27" name="Ultimate Healing" words="adura vita" requiredLevel="24" group="4">
+        <vocations>
+            <vocation id="2"/>
+            <vocation id="6"/>
+        </vocations>
+        <levels>
+            <level index="1" type="1" value="25" description="Reduce Mana Cost for 25%"/>
+            <level index="2" type="8" value="100" description="Increase Rune Amount for 100%"/>
+        </levels>
+    </spell>
+
+
+    <spell id="28" name="Magic Wall" words="adevo grav tera" requiredLevel="32" group="4">
+        <vocations>
+            <vocation id="1"/>
+            <vocation id="5"/>
+        </vocations>
+        <levels>
+            <level index="1" type="1" value="20" description="Reduce Mana Cost for 20%"/>
+            <level index="2" type="8" value="100" description="Increase Rune Amount for 100%"/>
+        </levels>
+    </spell>
+
+
+    <spell id="29" name="Paralyze" words="adana ani" requiredLevel="54" group="4">
+        <vocations>
+            <vocation id="2"/>
+            <vocation id="6"/>
+        </vocations>
+        <levels>
+            <level index="1" type="1" value="28.5" description="Reduce Mana Cost for 28.5%"/>
+            <level index="2" type="8" value="100" description="Increase Rune Amount for 100%"/>
+        </levels>
+    </spell>
+
+
+    <spell id="30" name="Thunderstorm" words="adori mas vis" requiredLevel="28" group="4">
+        <vocations>
+            <vocation id="1"/>
+            <vocation id="5"/>
+        </vocations>
+        <levels>
+            <level index="1" type="1" value="23" description="Reduce Mana Cost for 23%"/>
+            <level index="2" type="8" value="100" description="Increase Rune Amount for 100%"/>
+        </levels>
+    </spell>
+
+
+    <spell id="31" name="Icicle" words="adori frigo" requiredLevel="28" group="4">
+        <vocations>
+            <vocation id="2"/>
+            <vocation id="6"/>
+        </vocations>
+        <levels>
+            <level index="1" type="1" value="28" description="Reduce Mana Cost for 28%"/>
+            <level index="2" type="8" value="100" description="Increase Rune Amount for 100%"/>
+        </levels>
+    </spell>
+
+
+    <spell id="32" name="Conjure Arrow" words="exevo con" requiredLevel="13" group="4">
+        <vocations>
+            <vocation id="3"/>
+            <vocation id="7"/>
+        </vocations>
+        <levels>
+            <level index="1" type="1" value="30" description="Reduce Mana Cost for 30%"/>
+            <level index="2" type="11" value="100" description="Increase Ammo Amount for 100%"/>
+        </levels>
+    </spell>
+
+
+    <spell id="33" name="Conjure Bolt" words="exevo con mort" requiredLevel="17" group="4">
+        <vocations>
+            <vocation id="3"/>
+            <vocation id="7"/>
+        </vocations>
+        <levels>
+            <level index="1" type="1" value="28.5" description="Reduce Mana Cost for 28.5%"/>
+            <level index="2" type="11" value="100" description="Increase Ammo Amount for 100%"/>
+        </levels>
+    </spell>
+
+
+    <spell id="34" name="Conjure Explosive Arrow" words="exevo con flam" requiredLevel="25" group="4">
+        <vocations>
+            <vocation id="3"/>
+            <vocation id="7"/>
+        </vocations>
+        <levels>
+            <level index="1" type="1" value="31" description="Reduce Mana Cost for 31%"/>
+            <level index="2" type="11" value="100" description="Increase Ammo Amount for 100%"/>
+        </levels>
+    </spell>
+
+
+    <spell id="35" name="Conjure Piercing Bolt" words="exevo con grav" requiredLevel="33" group="4">
+        <vocations>
+            <vocation id="3"/>
+            <vocation id="7"/>
+        </vocations>
+        <levels>
+            <level index="1" type="1" value="33" description="Reduce Mana Cost for 33%"/>
+            <level index="2" type="11" value="100" description="Increase Ammo Amount for 100%"/>
+        </levels>
+    </spell>
+
+
+    <spell id="36" name="Conjure Sniper Arrow" words="exevo con hur" requiredLevel="24" group="4">
+        <vocations>
+            <vocation id="3"/>
+            <vocation id="7"/>
+        </vocations>
+        <levels>
+            <level index="1" type="1" value="32" description="Reduce Mana Cost for 32%"/>
+            <level index="2" type="11" value="100" description="Increase Ammo Amount for 100%"/>
+        </levels>
+    </spell>
+
+
+    <spell id="37" name="Enchant Spear" words="exeta con" requiredLevel="45" group="4">
+        <vocations>
+            <vocation id="3"/>
+            <vocation id="7"/>
+        </vocations>
+        <levels>
+            <level index="1" type="1" value="28.5" description="Reduce Mana Cost for 28.5%"/>
+            <level index="2" type="11" value="100" description="Increase Ammo Amount for 100%"/>
+        </levels>
+    </spell>
+
+
+    <spell id="38" name="Conjure Power Bolt" words="exevo con vis" requiredLevel="59" group="4">
+        <vocations>
+            <vocation id="3"/>
+            <vocation id="7"/>
+        </vocations>
+        <levels>
+            <level index="1" type="1" value="36" description="Reduce Mana Cost for 36%"/>
+            <level index="2" type="11" value="100" description="Increase Ammo Amount for 100%"/>
+        </levels>
+    </spell>
+
+
+    <spell id="39" name="Great Energy Beam" words="exevo gran vis lux" requiredLevel="29" group="1">
+        <vocations>
+            <vocation id="1"/>
+            <vocation id="5"/>
+        </vocations>
+        <levels>
+            <level index="1" type="3" value="10" description="Increase Damage for 7%"/>
+            <level index="2" type="3" value="20" description="Increase Damage for 18%"/>
+            <level index="3" type="3" value="30" description="Increase Damage for 24%"/>
+        </levels>
+    </spell>
+
+
+    <spell id="40" name="Strike" words="exori mort/flam/vis" requiredLevel="14" group="1">
+        <vocations>
+            <vocation id="1"/>
+            <vocation id="2"/>
+            <vocation id="5"/>
+            <vocation id="6"/>
+        </vocations>
+        <levels>
+            <level index="1" type="3" value="7" description="Increase Damage for 15%"/>
+            <level index="2" type="3" value="10" description="Increase Damage for 30%"/>
+        </levels>
+    </spell>
+
+
+    <spell id="41" name="Ultimate Explosion" words="exevo gran mas vis" requiredLevel="60" group="1">
+        <vocations>
+            <vocation id="1"/>
+            <vocation id="5"/>
+        </vocations>
+        <levels>
+            <level index="1" type="3" value="8" description="Increase Damage for 8%"/>
+            <level index="2" type="1" value="8" description="Reduce Mana Cost for 8%"/>
+            <level index="3" type="1" value="15" description="Reduce Mana Cost for 15%"/>
+            <level index="4" type="2" value="20" description="Increase Damage for 20%"/>
         </levels>
     </spell>
 
