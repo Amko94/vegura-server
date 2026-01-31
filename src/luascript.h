@@ -600,6 +600,7 @@ protected:
 
     // Game
     static int luaGetSpellBoostDefinitionList(lua_State *L);
+    static int luaGetBoostTypesBySpellName(lua_State *L);
 
     static int luaGetMonsterTaskDefinitionList(lua_State *L);
 

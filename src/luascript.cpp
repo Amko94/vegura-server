@@ -960,6 +960,7 @@ void LuaScriptInterface::registerFunctions() {
 
 
     lua_register(luaState, "getSpellBoostDefinitionsList", LuaScriptInterface::luaGetSpellBoostDefinitionList);
+    lua_register(luaState, "getBoostTypesBySpellName", LuaScriptInterface::luaGetBoostTypesBySpellName);
     lua_register(luaState, "getMonsterTaskDefinitionList", LuaScriptInterface::luaGetMonsterTaskDefinitionList);
     lua_register(luaState, "getMonsterTaskDefinitionById", LuaScriptInterface::luaGetMonsterTaskDefinitionById);
 
@@ -4075,6 +4076,29 @@ int LuaScriptInterface::luaGetSpellBoostDefinitionList(lua_State *L) {
         lua_setfield(L, -2, "spellBoostLevels");
 
         lua_rawseti(L, -2, index++);
+    }
+
+    return 1;
+}
+
+int LuaScriptInterface::luaGetBoostTypesBySpellName(lua_State *L) {
+    // getBoostTypesBySpellName(spellName)
+    std::string spellName = getString(L, 1);
+    const SpellBoostDefinition *def = g_spells->getSpellBoostDefinition(spellName);
+
+    lua_newtable(L);
+
+    if (def) {
+        std::set<uint8_t> boostTypes;
+        for (const auto &lvl : def->spellBoostLevels) {
+            boostTypes.insert(lvl.type);
+        }
+
+        int index = 1;
+        for (uint8_t type : boostTypes) {
+            lua_pushinteger(L, type);
+            lua_rawseti(L, -2, index++);
+        }
     }
 
     return 1;
