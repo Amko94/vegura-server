@@ -87,7 +87,7 @@
     </spell>
 
 
-    <spell id="7" name="Poison Storm" words="exori con" requiredLevel="50" group="1">
+    <spell id="7" name="Poison Storm" words="exevo gran mas pox" requiredLevel="50" group="1">
         <vocations>
             <vocation id="2"/>
             <vocation id="6"/>

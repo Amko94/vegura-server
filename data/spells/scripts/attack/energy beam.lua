@@ -19,7 +19,7 @@ function onCastSpell(creature, variant)
     local spellName = "Energy Beam"
 
     local base = {
-        mana = 60,
+        mana = 100,
         damageMultiplier = 0.8
     }
 
