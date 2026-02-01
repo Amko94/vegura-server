@@ -994,6 +994,7 @@ protected:
 
     static int luaPlayerGetUpgradeSpellPrice(lua_State *L);
 
+    static int luaPlayerGetSpellBoostLevelByName(lua_State *L);
     static int luaPlayerGetSpellBoostValue(lua_State *L);
 
     static int luaPlayerUpgradeSpellLevel(lua_State *L);

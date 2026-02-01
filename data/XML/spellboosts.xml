@@ -55,12 +55,19 @@
     <spell id="5" name="Haste" words="utani hur" requiredLevel="14" group="3">
         <vocations>
             <vocation id="1"/>
+            <vocation id="2"/>
+            <vocation id="3"/>
+            <vocation id="4"/>
             <vocation id="5"/>
+            <vocation id="6"/>
+            <vocation id="7"/>
+            <vocation id="8"/>
         </vocations>
         <levels>
             <level index="1" type="4" value="8" description="Increase Speed for 8%"/>
             <level index="2" type="1" value="16.5" description="Reduce Mana Cost for 16.5%"/>
             <level index="3" type="4" value="15" description="Increase Speed for 15%"/>
+            <level index="4" type="2" value="20" description="Increase Duration for 20%"/>
         </levels>
     </spell>
 
@@ -519,7 +526,7 @@
             <level index="1" type="3" value="8" description="Increase Damage for 8%"/>
             <level index="2" type="1" value="8" description="Reduce Mana Cost for 8%"/>
             <level index="3" type="1" value="15" description="Reduce Mana Cost for 15%"/>
-            <level index="4" type="2" value="20" description="Increase Damage for 20%"/>
+            <level index="1" type="2" value="20" description="Increase Damage for 20%"/>
         </levels>
     </spell>
 

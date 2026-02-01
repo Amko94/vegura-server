@@ -2035,6 +2035,7 @@ void LuaScriptInterface::registerFunctions() {
     registerMethod("Player", "getSpellBoostLevels", LuaScriptInterface::luaGetPlayerSpellBoostLevels);
     registerMethod("Player", "upgradeSpellLevel", LuaScriptInterface::luaPlayerUpgradeSpellLevel);
     registerMethod("Player", "getUpgradeSpellPrice", LuaScriptInterface::luaPlayerGetUpgradeSpellPrice);
+    registerMethod("Player", "getSpellBoostLevelByName", LuaScriptInterface::luaPlayerGetSpellBoostLevelByName);
     registerMethod("Player", "getSpellBoostValue", LuaScriptInterface::luaPlayerGetSpellBoostValue);
     registerMethod("Player", "getGuid", LuaScriptInterface::luaPlayerGetGuid);
     registerMethod("Player", "getIp", LuaScriptInterface::luaPlayerGetIp);
@@ -3993,6 +3994,18 @@ int LuaScriptInterface::luaPlayerGetUpgradeSpellPrice(lua_State *L) {
     return 1;
 }
 
+int LuaScriptInterface::luaPlayerGetSpellBoostLevelByName(lua_State *L) {
+    Player *player = getUserdata<Player>(L, 1);
+    if (!player) {
+        lua_pushnil(L);
+        return 1;
+    }
+
+    std::string spellName = getString(L, 2);
+    lua_pushinteger(L, player->getSpellBoostLevelByName(spellName));
+    return 1;
+}
+
 int LuaScriptInterface::luaPlayerGetSpellBoostValue(lua_State *L) {
     Player *player = getUserdata<Player>(L, 1);
     if (!player) {
@@ -4081,6 +4094,7 @@ int LuaScriptInterface::luaGetSpellBoostDefinitionList(lua_State *L) {
     return 1;
 }
 
+
 int LuaScriptInterface::luaGetBoostTypesBySpellName(lua_State *L) {
     // getBoostTypesBySpellName(spellName)
     std::string spellName = getString(L, 1);
@@ -4089,14 +4103,16 @@ int LuaScriptInterface::luaGetBoostTypesBySpellName(lua_State *L) {
     lua_newtable(L);
 
     if (def) {
-        std::set<uint8_t> boostTypes;
-        for (const auto &lvl : def->spellBoostLevels) {
-            boostTypes.insert(lvl.type);
-        }
-
         int index = 1;
-        for (uint8_t type : boostTypes) {
-            lua_pushinteger(L, type);
+        for (const auto &lvl: def->spellBoostLevels) {
+            lua_newtable(L);
+
+            lua_pushinteger(L, lvl.level);
+            lua_setfield(L, -2, "level");
+
+            lua_pushinteger(L, lvl.type);
+            lua_setfield(L, -2, "type");
+
             lua_rawseti(L, -2, index++);
         }
     }

@@ -1,4 +1,6 @@
-﻿SpellBoostManager = {}
+﻿SpellBoostManager = {
+    Handlers = {}
+}
 
 local function spellHasVocation(spell, vocationId)
     for _, vocId in ipairs(spell.vocations) do
@@ -96,4 +98,81 @@ function SpellBoostManager.boostSpell(spellName, player)
     SpellBoostManager.getPlayerSpellLevels(player)
 
     return true
+end
+
+function SpellBoostManager.resolveSpellBoosts(player, spellName)
+    local result = {}
+
+    local playerLevel = player:getSpellBoostLevelByName(spellName)
+
+    if not playerLevel or playerLevel <= 0 then
+        return result
+    end
+
+    local boostDefs = getBoostTypesBySpellName(spellName)
+    if not boostDefs then
+        return result
+    end
+
+    for _, boost in ipairs(boostDefs) do
+        if boost.level <= playerLevel then
+            local boostType = boost.type
+            local value = player:getSpellBoostValue(spellName, boostType) or 0
+
+            if value > 0 then
+                result[boostType] = (result[boostType] or 0) + value
+            end
+        end
+    end
+
+    return result
+end
+
+local function percentIncrease(base, pct)
+    return base * (1 + pct / 100)
+end
+
+local function percentReduce(base, pct)
+    return base * (1 - pct / 100)
+end
+
+SpellBoostManager.Handlers[SpellBoostType.IncreaseDuration] = percentIncrease
+SpellBoostManager.Handlers[SpellBoostType.IncreaseDamage] = percentIncrease
+SpellBoostManager.Handlers[SpellBoostType.IncreaseSpeed] = percentIncrease
+SpellBoostManager.Handlers[SpellBoostType.IncreaseHealing] = percentIncrease
+SpellBoostManager.Handlers[SpellBoostType.IncreaseRange] = percentIncrease
+
+SpellBoostManager.Handlers[SpellBoostType.ReduceManaCost] = percentReduce
+SpellBoostManager.Handlers[SpellBoostType.ReduceCooldown] = percentReduce
+
+SpellBoostManager.Handlers[SpellBoostType.IncreaseMonsterSummon] = function(base, pct)
+    return math.floor(percentIncrease(base, pct))
+end
+
+SpellBoostManager.Handlers[SpellBoostType.IncreaseRuneAmount] = function(base, pct)
+    return math.floor(percentIncrease(base, pct))
+end
+
+SpellBoostManager.Handlers[SpellBoostType.IncreaseConjureAmount] = function(base, pct)
+    return math.floor(percentIncrease(base, pct))
+end
+
+SpellBoostManager.Handlers[SpellBoostType.IncreaseAreaOfEffect] = function(base, tiles)
+    return base + tiles
+end
+
+function SpellBoostManager.apply(baseValue, boosts, boostType)
+    local boostValue = boosts[boostType]
+
+    if not boostValue or boostValue == 0 then
+        return baseValue
+    end
+
+    local handler = SpellBoostManager.Handlers[boostType]
+    if not handler then
+        return baseValue
+    end
+
+    local result = handler(baseValue, boostValue)
+    return result
 end
