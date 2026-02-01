@@ -1,33 +1,88 @@
-local combat = createCombatObject()
-setCombatParam(combat, COMBAT_PARAM_TYPE, COMBAT_PHYSICALDAMAGE)
-setCombatParam(combat, COMBAT_PARAM_EFFECT, CONST_ME_EXPLOSIONAREA)
-function onGetFormulaValues(cid, level, maglevel)
-	min = -(level * 5.1 + maglevel * 6.95)
-	max = -(level * 6.0 + maglevel * 9.2)
-	return min, max
+local STORAGE_UE_DAMAGE_BOOST = 50050
+local STORAGE_EXHAUSTION_UE = 50051
+
+local combat = Combat()
+combat:setParameter(COMBAT_PARAM_TYPE, COMBAT_PHYSICALDAMAGE)
+combat:setParameter(COMBAT_PARAM_EFFECT, CONST_ME_EXPLOSIONAREA)
+
+local area = createCombatArea({
+    { 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0 },
+    { 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0 },
+    { 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
+    { 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
+    { 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1 },
+    { 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
+    { 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
+    { 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0 },
+    { 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 },
+})
+combat:setArea(area)
+
+function onGetFormulaValues(player, level, maglevel)
+    local baseMin = (level * 5.1) + (maglevel * 6.95)
+    local baseMax = (level * 6.0) + (maglevel * 9.2)
+
+    local dmgBoostPct = player:getStorageValue(STORAGE_UE_DAMAGE_BOOST)
+    if dmgBoostPct < 0 then
+        dmgBoostPct = 0
+    end
+
+    local multiplier = 1 + dmgBoostPct / 100
+
+    return -baseMin * multiplier, -baseMax * multiplier
 end
 
-setCombatCallback(combat, CALLBACK_PARAM_LEVELMAGICVALUE, "onGetFormulaValues")
+combat:setCallback(CALLBACK_PARAM_LEVELMAGICVALUE, "onGetFormulaValues")
 
-arr = {
-{0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0},
-{0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0},
-{0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0},
-{0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0},
-{0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0},
-{1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1},
-{0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0},
-{0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0},
-{0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0},
-{0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0},
-{0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0},
-}
+function onCastSpell(creature, variant)
+    local player = Player(creature)
+    if not player then
+        return false
+    end
 
-local area = createCombatArea(arr)
+    if player:getStorageValue(STORAGE_EXHAUSTION_UE) > os.time() then
+        player:sendCancelMessage("You are exhausted.")
+        return false
+    end
 
-setCombatArea(combat, area)
+    local spellName = "Ultimate Explosion"
 
-function onCastSpell(cid, var)
+    local base = {
+        mana = 1200,
+        cooldown = 2
+    }
 
-	return doCombat(cid, combat, var)
+    local boosts = SpellBoostManager.resolveSpellBoosts(player, spellName)
+
+    local finalManaCost = SpellBoostManager.apply(
+            base.mana,
+            boosts,
+            SpellBoostType.ReduceManaCost
+    )
+    finalManaCost = math.max(0, math.floor(finalManaCost))
+
+    if player:getMana() < finalManaCost then
+        player:sendCancelMessage("Not enough mana.")
+        return false
+    end
+
+    player:addMana(-finalManaCost)
+
+    local damageBoost = boosts[SpellBoostType.IncreaseDamage] or 0
+    player:setStorageValue(STORAGE_UE_DAMAGE_BOOST, damageBoost)
+
+    local finalCooldown = SpellBoostManager.apply(
+            base.cooldown,
+            boosts,
+            SpellBoostType.ReduceCooldown
+    )
+    player:setExhaustion(STORAGE_EXHAUSTION_UE, finalCooldown)
+
+    local result = combat:execute(creature, variant)
+
+    player:setStorageValue(STORAGE_UE_DAMAGE_BOOST, -1)
+
+    return result
 end
