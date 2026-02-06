@@ -7,27 +7,12 @@ function onCastSpell(creature, variant)
     local spellName = "Haste"
 
     local base = {
-        mana = 60,
         duration = 33000,
         speedA = 0.3,
         speedB = -24
     }
 
     local boosts = SpellBoostManager.resolveSpellBoosts(player, spellName)
-
-    local finalManaCost = SpellBoostManager.apply(
-            base.mana,
-            boosts,
-            SpellBoostType.ReduceManaCost
-    )
-    finalManaCost = math.max(0, math.floor(finalManaCost))
-
-    if player:getMana() < finalManaCost then
-        player:sendCancelMessage("Not enough mana.")
-        return false
-    end
-
-    player:addMana(-finalManaCost)
 
     local finalSpeedA = SpellBoostManager.apply(
             base.speedA,

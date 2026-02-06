@@ -19,25 +19,10 @@ function onCastSpell(creature, variant)
     local spellName = "Energy Beam"
 
     local base = {
-        mana = 100,
         damageMultiplier = 0.8
     }
 
     local boosts = SpellBoostManager.resolveSpellBoosts(player, spellName)
-
-    local finalManaCost = SpellBoostManager.apply(
-            base.mana,
-            boosts,
-            SpellBoostType.ReduceManaCost
-    )
-    finalManaCost = math.floor(finalManaCost)
-
-    if player:getMana() < finalManaCost then
-        player:sendCancelMessage("Not enough mana.")
-        return false
-    end
-
-    player:addMana(-finalManaCost)
 
     local damageMultiplier = SpellBoostManager.apply(
             base.damageMultiplier,

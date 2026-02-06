@@ -31,25 +31,7 @@ function onCastSpell(creature, variant)
 
     local spellName = "Whirlwind Throw"
 
-    local base = {
-        mana = 40
-    }
-
     local boosts = SpellBoostManager.resolveSpellBoosts(player, spellName)
-
-    local finalManaCost = SpellBoostManager.apply(
-            base.mana,
-            boosts,
-            SpellBoostType.ReduceManaCost
-    )
-    finalManaCost = math.max(0, math.floor(finalManaCost))
-
-    if player:getMana() < finalManaCost then
-        player:sendCancelMessage("Not enough mana.")
-        return false
-    end
-
-    player:addMana(-finalManaCost)
 
     local damageBoost = boosts[SpellBoostType.IncreaseDamage] or 0
     player:setStorageValue(STORAGE_WHIRLWIND_THROW_DAMAGE_BOOST, damageBoost)

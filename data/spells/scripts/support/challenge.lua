@@ -1,13 +1,25 @@
-local combat = Combat()
-combat:setParameter(COMBAT_PARAM_EFFECT, CONST_ME_MAGIC_BLUE)
-combat:setArea(createCombatArea(AREA_SQUARE1X1))
+local area1 = createCombatArea(AREA_SQUARE1X1)
+local area2 = createCombatArea(AREA_SQUARE2X2)
 
-function onTargetCreature(creature, target)
-	return doChallengeCreature(creature, target)
-end
+local combat1 = Combat()
+combat1:setParameter(COMBAT_PARAM_EFFECT, CONST_ME_MAGIC_BLUE)
+combat1:setArea(area1)
 
-combat:setCallback(CALLBACK_PARAM_TARGETCREATURE, "onTargetCreature")
+local combat2 = Combat()
+combat2:setParameter(COMBAT_PARAM_EFFECT, CONST_ME_MAGIC_BLUE)
+combat2:setArea(area2)
 
 function onCastSpell(creature, variant)
-	return combat:execute(creature, variant)
+    local player = Player(creature)
+    if not player then
+        return false
+    end
+
+    local spellName = "Challenge"
+    local boosts = SpellBoostManager.resolveSpellBoosts(player, spellName)
+
+    local hasAoEBoost = (boosts[SpellBoostType.IncreaseAreaOfEffect] or 0) > 0
+    local combat = hasAoEBoost and combat2 or combat1
+
+    return combat:execute(creature, variant)
 end

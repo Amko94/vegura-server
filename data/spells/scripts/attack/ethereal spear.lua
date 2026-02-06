@@ -32,25 +32,7 @@ function onCastSpell(creature, variant)
 
     local spellName = "Ethereal Spear"
 
-    local base = {
-        mana = 35
-    }
-
     local boosts = SpellBoostManager.resolveSpellBoosts(player, spellName)
-
-    local finalManaCost = SpellBoostManager.apply(
-            base.mana,
-            boosts,
-            SpellBoostType.ReduceManaCost
-    )
-    finalManaCost = math.max(0, math.floor(finalManaCost))
-
-    if player:getMana() < finalManaCost then
-        player:sendCancelMessage("Not enough mana.")
-        return false
-    end
-
-    player:addMana(-finalManaCost)
 
     local damageBoost = boosts[SpellBoostType.IncreaseDamage] or 0
     player:setStorageValue(STORAGE_ETHEREAL_DAMAGE_BOOST, damageBoost)

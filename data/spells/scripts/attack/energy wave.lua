@@ -31,7 +31,6 @@ function onCastSpell(creature, variant)
     local spellName = "Energy Wave"
 
     local base = {
-        mana = 250,
         minA = 1.3,
         minB = 30,
         maxA = 1.7,
@@ -39,20 +38,6 @@ function onCastSpell(creature, variant)
     }
 
     local boosts = SpellBoostManager.resolveSpellBoosts(player, spellName)
-
-    local finalManaCost = SpellBoostManager.apply(
-            base.mana,
-            boosts,
-            SpellBoostType.ReduceManaCost
-    )
-    finalManaCost = math.floor(finalManaCost)
-
-    if player:getMana() < finalManaCost then
-        player:sendCancelMessage("Not enough mana.")
-        return false
-    end
-
-    player:addMana(-finalManaCost)
 
     local finalMinA = SpellBoostManager.apply(
             base.minA,

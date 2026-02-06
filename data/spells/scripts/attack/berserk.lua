@@ -1,5 +1,4 @@
 local STORAGE_BERSERK_DAMAGE_BOOST = 50000
-local STORAGE_EXHAUSTION_BERSERK = 50001
 
 local combat = Combat()
 combat:setParameter(COMBAT_PARAM_TYPE, COMBAT_PHYSICALDAMAGE)
@@ -30,42 +29,12 @@ function onCastSpell(creature, variant)
         return false
     end
 
-    if player:getStorageValue(STORAGE_EXHAUSTION_BERSERK) > os.time() then
-        player:sendCancelMessage("You are exhausted.")
-        return false
-    end
-
     local spellName = "Berserk"
-
-    local base = {
-        mana = 115,
-        cooldown = 2
-    }
 
     local boosts = SpellBoostManager.resolveSpellBoosts(player, spellName)
 
-    local finalManaCost = SpellBoostManager.apply(
-            base.mana,
-            boosts,
-            SpellBoostType.ReduceManaCost
-    )
-    finalManaCost = math.max(0, math.floor(finalManaCost))
-
-    if player:getMana() < finalManaCost then
-        player:sendCancelMessage("Not enough mana.")
-        return false
-    end
-
-    player:addMana(-finalManaCost)
     local damageBoost = boosts[SpellBoostType.IncreaseDamage] or 0
     player:setStorageValue(STORAGE_BERSERK_DAMAGE_BOOST, damageBoost)
-
-    local finalCooldown = SpellBoostManager.apply(
-            base.cooldown,
-            boosts,
-            SpellBoostType.ReduceCooldown)
-
-    player:setExhaustion(STORAGE_EXHAUSTION_BERSERK, finalCooldown)
 
     local result = combat:execute(creature, variant)
 

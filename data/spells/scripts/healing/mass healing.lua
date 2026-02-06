@@ -23,35 +23,20 @@ function onCastSpell(creature, variant)
 
 	local spellName = "Mass Healing"
 
-	local base = {
-		mana = 150,
-		minA = 0.6,
-		minB = 30,
-		maxA = 1.2,
-		maxB = 0
-	}
+    local base = {
+        minA = 0.6,
+        minB = 30,
+        maxA = 1.2,
+        maxB = 0
+    }
 
-	local boosts = SpellBoostManager.resolveSpellBoosts(player, spellName)
+    local boosts = SpellBoostManager.resolveSpellBoosts(player, spellName)
 
-	local finalManaCost = SpellBoostManager.apply(
-			base.mana,
-			boosts,
-			SpellBoostType.ReduceManaCost
-	)
-	finalManaCost = math.max(0, math.floor(finalManaCost))
-
-	if player:getMana() < finalManaCost then
-		player:sendCancelMessage("Not enough mana.")
-		return false
-	end
-
-	player:addMana(-finalManaCost)
-
-	local finalMinA = SpellBoostManager.apply(
-			base.minA,
-			boosts,
-			SpellBoostType.IncreaseHealing
-	)
+    local finalMinA = SpellBoostManager.apply(
+            base.minA,
+            boosts,
+            SpellBoostType.IncreaseHealing
+    )
 
 	local finalMaxA = SpellBoostManager.apply(
 			base.maxA,

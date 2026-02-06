@@ -248,9 +248,9 @@
             <vocation id="8"/>
         </vocations>
         <levels>
-            <level index="1" type="10" value="10" description="Increase Area of Effect for 10%"/>
-            <level index="2" type="1" value="16.5" description="Reduce Mana Cost for 16.5%"/>
-            <level index="3" type="10" value="20" description="Increase Area of Effect for 20%"/>
+            <level index="1" type="1" value="8" description="Reduce Mana Cost for 8%"/>
+            <level index="2" type="1" value="12" description="Reduce Mana Cost for 12"/>
+            <level index="3" type="10" value="1" description="Increase Area of Effect for 100%"/>
         </levels>
     </spell>
 

@@ -42,43 +42,12 @@ function onCastSpell(creature, variant)
         return false
     end
 
-    if player:getStorageValue(STORAGE_EXHAUSTION_UE) > os.time() then
-        player:sendCancelMessage("You are exhausted.")
-        return false
-    end
-
     local spellName = "Ultimate Explosion"
-
-    local base = {
-        mana = 1200,
-        cooldown = 2
-    }
 
     local boosts = SpellBoostManager.resolveSpellBoosts(player, spellName)
 
-    local finalManaCost = SpellBoostManager.apply(
-            base.mana,
-            boosts,
-            SpellBoostType.ReduceManaCost
-    )
-    finalManaCost = math.max(0, math.floor(finalManaCost))
-
-    if player:getMana() < finalManaCost then
-        player:sendCancelMessage("Not enough mana.")
-        return false
-    end
-
-    player:addMana(-finalManaCost)
-
     local damageBoost = boosts[SpellBoostType.IncreaseDamage] or 0
     player:setStorageValue(STORAGE_UE_DAMAGE_BOOST, damageBoost)
-
-    local finalCooldown = SpellBoostManager.apply(
-            base.cooldown,
-            boosts,
-            SpellBoostType.ReduceCooldown
-    )
-    player:setExhaustion(STORAGE_EXHAUSTION_UE, finalCooldown)
 
     local result = combat:execute(creature, variant)
 

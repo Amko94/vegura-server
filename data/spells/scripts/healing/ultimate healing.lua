@@ -14,32 +14,5 @@ end
 combat:setCallback(CALLBACK_PARAM_LEVELMAGICVALUE, "onGetFormulaValues")
 
 function onCastSpell(creature, variant)
-	local player = Player(creature)
-	if not player then
-		return false
-	end
-
-	local spellName = "Ultimate Healing"
-
-	local base = {
-		mana = 160
-	}
-
-	local boosts = SpellBoostManager.resolveSpellBoosts(player, spellName)
-
-	local finalManaCost = SpellBoostManager.apply(
-			base.mana,
-			boosts,
-			SpellBoostType.ReduceManaCost
-	)
-	finalManaCost = math.max(0, math.floor(finalManaCost))
-
-	if player:getMana() < finalManaCost then
-		player:sendCancelMessage("Not enough mana.")
-		return false
-	end
-
-	player:addMana(-finalManaCost)
-
 	return combat:execute(creature, variant)
 end

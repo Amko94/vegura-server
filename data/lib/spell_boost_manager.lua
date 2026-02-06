@@ -142,8 +142,6 @@ SpellBoostManager.Handlers[SpellBoostType.IncreaseSpeed] = percentIncrease
 SpellBoostManager.Handlers[SpellBoostType.IncreaseHealing] = percentIncrease
 SpellBoostManager.Handlers[SpellBoostType.IncreaseRange] = percentIncrease
 
-SpellBoostManager.Handlers[SpellBoostType.ReduceManaCost] = percentReduce
-SpellBoostManager.Handlers[SpellBoostType.ReduceCooldown] = percentReduce
 
 SpellBoostManager.Handlers[SpellBoostType.IncreaseMonsterSummon] = function(base, pct)
     return math.floor(percentIncrease(base, pct))
