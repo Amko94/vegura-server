@@ -33,6 +33,9 @@ extern ConfigManager g_config;
 extern Events *g_events;
 extern Spells *g_spells;
 
+static constexpr uint8_t BOOST_INCREASE_DAMAGE = 3;
+static constexpr uint8_t BOOST_INCREASE_HEALING = 7;
+
 Combat::Combat() : formulaType(COMBAT_FORMULA_UNDEFINED),
                    mina(0.0), minb(0.0), maxa(0.0), maxb(0.0),
                    area(nullptr) {
@@ -88,69 +91,60 @@ CombatDamage Combat::getCombatDamage(Creature *creature, Creature *target) const
         }
     }
 
-    if (params.combatType == COMBAT_HEALING) {
-        if (Player *player = creature->getPlayer()) {
-            float healingMultiplier = getHealingMultiplierWithBoost(player, spellName);
-            damage.primary.value = static_cast<int32_t>(damage.primary.value * healingMultiplier);
+    if (Player *player = creature->getPlayer()) {
+        if (params.combatType == COMBAT_HEALING) {
+            damage.primary.value = applyHealingBoost(player, spellName, damage.primary.value);
+        } else {
+            damage.primary.value = applyDamageBoost(player, spellName, damage.primary.value);
         }
-    } else if (Player *player = creature->getPlayer()) {
-        float damageMultiplier = getDamageMultiplierWithBoost(player, spellName);
-        damage.primary.value = static_cast<int32_t>(damage.primary.value * damageMultiplier);
     }
-
 
     return damage;
 }
 
 
-float Combat::getHealingMultiplierWithBoost(Player *player, const std::string &spellName) const {
-    uint8_t spellLevel = player->getSpellBoostLevelByName(spellName);
-    const SpellBoostDefinition *def = g_spells->getSpellBoostDefinition(spellName);
+int32_t Combat::applyDamageBoost(Player *player, const std::string &spellName, int32_t baseValue) const {
+    const float percent = getMaxBoostPercent(player, spellName, BOOST_INCREASE_DAMAGE);
+    if (percent <= 0.0f) {
+        return baseValue;
+    }
 
+    const int64_t result = static_cast<int64_t>(baseValue) +
+                           (static_cast<int64_t>(baseValue) * static_cast<int64_t>(percent)) / 100;
+
+    return static_cast<int32_t>(result);
+}
+
+int32_t Combat::applyHealingBoost(Player *player, const std::string &spellName, int32_t baseValue) const {
+    const float percent = getMaxBoostPercent(player, spellName, BOOST_INCREASE_HEALING);
+    if (percent <= 0.0f) {
+        return baseValue;
+    }
+
+    const int64_t result = static_cast<int64_t>(baseValue) +
+                           (static_cast<int64_t>(baseValue) * static_cast<int64_t>(percent)) / 100;
+
+    return static_cast<int32_t>(result);
+}
+
+float Combat::getMaxBoostPercent(Player *player, const std::string &spellName, uint8_t boostType) const {
+    const uint8_t spellLevel = player->getSpellBoostLevelByName(spellName);
+    const SpellBoostDefinition *def = g_spells->getSpellBoostDefinition(spellName);
     if (!def) {
-        return 1.0f;
+        return 0.0f;
     }
 
     float maxBoost = 0.0f;
     for (const auto &boost: def->spellBoostLevels) {
-        if (spellLevel >= boost.level && boost.type == 7) {
-            // 7 = IncreaseHealing
+        if (spellLevel >= boost.level && boost.type == boostType) {
             if (boost.value > maxBoost) {
                 maxBoost = boost.value;
             }
         }
     }
-
-    if (maxBoost > 0.0f) {
-        return 1.0f + (maxBoost / 100.0f);
-    }
-
-    return 1.0f;
+    return maxBoost;
 }
 
-float Combat::getDamageMultiplierWithBoost(Player *player, const std::string &spellName) const {
-    uint8_t spellLevel = player->getSpellBoostLevelByName(spellName);
-    const SpellBoostDefinition *def = g_spells->getSpellBoostDefinition(spellName);
-
-    if (!def) {
-        return 1.0f;
-    }
-
-    float maxBoost = 0.0f;
-    for (const auto &boost: def->spellBoostLevels) {
-        if (spellLevel >= boost.level && boost.type == 3) {
-            if (boost.value > maxBoost) {
-                maxBoost = boost.value;
-            }
-        }
-    }
-
-    if (maxBoost > 0.0f) {
-        return 1.0f + (maxBoost / 100.0f);
-    }
-
-    return 1.0f;
-}
 
 void Combat::getCombatArea(const Position &centerPos, const Position &targetPos, const AreaCombat *area,
                            std::forward_list<Tile *> &list) {

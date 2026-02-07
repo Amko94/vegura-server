@@ -382,10 +382,12 @@ protected:
 
     CombatDamage getCombatDamage(Creature *creature, Creature *target) const;
 
-    float Combat::getDamageMultiplierWithBoost(Player *player, const std::string &spellName) const;
 
-    float Combat::getHealingMultiplierWithBoost(Player *player, const std::string &spellName) const;
+    int32_t Combat::applyDamageBoost(Player *player, const std::string &spellName, int32_t baseValue) const;
 
+    int32_t Combat::applyHealingBoost(Player *player, const std::string &spellName, int32_t baseValue) const;
+
+    float Combat::getMaxBoostPercent(Player *player, const std::string &spellName, uint8_t boostType) const;
 
     //configureable
     CombatParams params;

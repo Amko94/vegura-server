@@ -10,16 +10,16 @@ combat2:setParameter(COMBAT_PARAM_EFFECT, CONST_ME_MAGIC_BLUE)
 combat2:setArea(area2)
 
 function onCastSpell(creature, variant)
-    local player = Player(creature)
-    if not player then
-        return false
-    end
+	local player = Player(creature)
+	if not player then
+		return false
+	end
 
-    local spellName = "Challenge"
-    local boosts = SpellBoostManager.resolveSpellBoosts(player, spellName)
+	local spellName = "Challenge"
+	local boosts = SpellBoostManager.resolveSpellBoosts(player, spellName)
 
-    local hasAoEBoost = (boosts[SpellBoostType.IncreaseAreaOfEffect] or 0) > 0
-    local combat = hasAoEBoost and combat2 or combat1
+	local hasAoEBoost = (boosts[SpellBoostType.IncreaseAreaOfEffect] or 0) > 0
+	local combat = hasAoEBoost and combat2 or combat1
 
-    return combat:execute(creature, variant)
+	return combat:execute(creature, variant)
 end
