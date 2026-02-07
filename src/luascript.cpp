@@ -2382,6 +2382,7 @@ void LuaScriptInterface::registerFunctions() {
     registerMethod("Combat", "setOrigin", LuaScriptInterface::luaCombatSetOrigin);
 
     registerMethod("Combat", "execute", LuaScriptInterface::luaCombatExecute);
+    registerMethod("Combat", "setSpellName", LuaScriptInterface::luaCombatSetSpellName);
 
     // Condition
     registerClass("Condition", "", LuaScriptInterface::luaConditionCreate);
@@ -10857,6 +10858,14 @@ int LuaScriptInterface::luaCombatExecute(lua_State *L) {
     }
 
     pushBoolean(L, true);
+    return 1;
+}
+
+int LuaScriptInterface::luaCombatSetSpellName(lua_State *L) {
+    Combat *combat = getUserdata<Combat>(L, 1);
+
+    combat->setSpellName(getString(L, 2));
+
     return 1;
 }
 

@@ -1459,6 +1459,7 @@ protected:
     static int luaCombatSetOrigin(lua_State *L);
 
     static int luaCombatExecute(lua_State *L);
+    static int luaCombatSetSpellName(lua_State *L);
 
     // Condition
     static int luaConditionCreate(lua_State *L);
