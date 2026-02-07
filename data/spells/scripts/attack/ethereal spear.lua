@@ -1,45 +1,18 @@
-local STORAGE_ETHEREAL_DAMAGE_BOOST = 50010
-
 local combat = Combat()
 combat:setParameter(COMBAT_PARAM_TYPE, COMBAT_PHYSICALDAMAGE)
 combat:setParameter(COMBAT_PARAM_EFFECT, CONST_ME_HITAREA)
 combat:setParameter(COMBAT_PARAM_DISTANCEEFFECT, CONST_ANI_ETHEREALSPEAR)
 combat:setParameter(COMBAT_PARAM_BLOCKARMOR, true)
-
+combat:setSpellName("Ethereal Spear")
 function onGetFormulaValues(player, skill, attack, factor)
     local distSkill = player:getEffectiveSkillLevel(SKILL_DISTANCE)
-
-    local baseMin = (player:getLevel() / 5) + distSkill * 1.5
-    local baseMax = (player:getLevel() / 5) + distSkill + 6
-
-    local dmgBoostPct = player:getStorageValue(STORAGE_ETHEREAL_DAMAGE_BOOST)
-    if dmgBoostPct < 0 then
-        dmgBoostPct = 0
-    end
-
-    local multiplier = 1 + dmgBoostPct / 100
-
-    return -baseMin * multiplier, -baseMax * multiplier
+    local min = (player:getLevel() / 5) + distSkill * 0.7
+    local max = (player:getLevel() / 5) + distSkill + 5
+    return -min, -max
 end
 
 combat:setCallback(CALLBACK_PARAM_SKILLVALUE, "onGetFormulaValues")
 
 function onCastSpell(creature, variant)
-    local player = Player(creature)
-    if not player then
-        return false
-    end
-
-    local spellName = "Ethereal Spear"
-
-    local boosts = SpellBoostManager.resolveSpellBoosts(player, spellName)
-
-    local damageBoost = boosts[SpellBoostType.IncreaseDamage] or 0
-    player:setStorageValue(STORAGE_ETHEREAL_DAMAGE_BOOST, damageBoost)
-
-    local result = combat:execute(creature, variant)
-
-    player:setStorageValue(STORAGE_ETHEREAL_DAMAGE_BOOST, -1)
-
-    return result
+    return combat:execute(creature, variant)
 end
