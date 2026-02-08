@@ -250,7 +250,7 @@
         <levels>
             <level index="1" type="1" value="8" description="Reduce Mana Cost for 8%"/>
             <level index="2" type="1" value="12" description="Reduce Mana Cost for 12"/>
-            <level index="3" type="10" value="1" description="Increase Area of Effect for 100%"/>
+            <level index="3" type="10" value="4" description="Increase Area of Effect for 4 Tile"/>
         </levels>
     </spell>
 
@@ -276,7 +276,7 @@
             <vocation id="7"/>
         </vocations>
         <levels>
-            <level index="1" type="1" value="28.6" description="Reduce Mana Cost for 28.6%"/>
+            <level index="1" type="1" value="28" description="Reduce Mana Cost for 28%"/>
             <level index="2" type="8" value="100" description="Increase Rune Amount for 100%"/>
         </levels>
     </spell>
@@ -496,9 +496,9 @@
             <vocation id="5"/>
         </vocations>
         <levels>
-            <level index="1" type="3" value="10" description="Increase Damage for 7%"/>
-            <level index="2" type="3" value="20" description="Increase Damage for 18%"/>
-            <level index="3" type="3" value="30" description="Increase Damage for 24%"/>
+            <level index="1" type="3" value="7" description="Increase Damage for 7%"/>
+            <level index="2" type="3" value="18" description="Increase Damage for 18%"/>
+            <level index="3" type="3" value="24" description="Increase Damage for 24%"/>
         </levels>
     </spell>
 
