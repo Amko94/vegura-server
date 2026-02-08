@@ -78,6 +78,7 @@ struct CombatParams {
         origin = ORIGIN_SPELL;
     }
 
+    std::string spellName;
     std::forward_list<std::unique_ptr<const Condition> > conditionList;
 
     std::unique_ptr<ValueCallback> valueCallback;
@@ -283,6 +284,7 @@ public:
 
     void setSpellName(const std::string &name) {
         spellName = name;
+        params.spellName = name;
     }
 
     Combat &operator=(const Combat &) = delete;
@@ -387,7 +389,7 @@ protected:
 
     int32_t Combat::applyHealingBoost(Player *player, const std::string &spellName, int32_t baseValue) const;
 
-    float Combat::getMaxBoostPercent(Player *player, const std::string &spellName, uint8_t boostType) const;
+    static float Combat::getMaxBoostPercent(Player *player, const std::string &spellName, uint8_t boostType);
 
     //configureable
     CombatParams params;

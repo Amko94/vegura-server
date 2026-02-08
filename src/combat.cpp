@@ -35,6 +35,8 @@ extern Spells *g_spells;
 
 static constexpr uint8_t BOOST_INCREASE_DAMAGE = 3;
 static constexpr uint8_t BOOST_INCREASE_HEALING = 7;
+static constexpr uint8_t BOOST_INCREASE_DURATION = 2;
+static constexpr uint8_t BOOST_INCREASE_SPEED = 4;
 
 Combat::Combat() : formulaType(COMBAT_FORMULA_UNDEFINED),
                    mina(0.0), minb(0.0), maxa(0.0), maxb(0.0),
@@ -127,7 +129,11 @@ int32_t Combat::applyHealingBoost(Player *player, const std::string &spellName, 
     return static_cast<int32_t>(result);
 }
 
-float Combat::getMaxBoostPercent(Player *player, const std::string &spellName, uint8_t boostType) const {
+float Combat::getMaxBoostPercent(Player *player, const std::string &spellName, uint8_t boostType) {
+    if (!player || spellName.empty()) {
+        return 0.0f;
+    }
+
     const uint8_t spellLevel = player->getSpellBoostLevelByName(spellName);
     const SpellBoostDefinition *def = g_spells->getSpellBoostDefinition(spellName);
     if (!def) {
@@ -558,15 +564,47 @@ void Combat::CombatManaFunc(Creature *caster, Creature *target, const CombatPara
     }
 }
 
+
 void Combat::CombatConditionFunc(Creature *caster, Creature *target, const CombatParams &params, CombatDamage *) {
+    Player *player = caster ? caster->getPlayer() : nullptr;
+
+    const float durationPct = getMaxBoostPercent(player, params.spellName, BOOST_INCREASE_DURATION);
+    const float speedPct = getMaxBoostPercent(player, params.spellName, BOOST_INCREASE_SPEED);
+
     for (const auto &condition: params.conditionList) {
         if (caster == target || !target->isImmune(condition->getType())) {
             Condition *conditionCopy = condition->clone();
+
             if (caster) {
                 conditionCopy->setParam(CONDITION_PARAM_OWNER, caster->getID());
             }
 
-            //TODO: infight condition until all aggressive conditions has ended
+            if (durationPct > 0.0f) {
+                const int32_t ticks = conditionCopy->getTicks();
+                if (ticks > 0) {
+                    const int64_t boosted = static_cast<int64_t>(ticks) +
+                                            (static_cast<int64_t>(ticks) * static_cast<int64_t>(durationPct)) / 100;
+                    conditionCopy->setTicks(static_cast<int32_t>(boosted));
+                }
+            }
+
+            if (speedPct > 0.0f) {
+                if (conditionCopy->getType() == CONDITION_HASTE) {
+                    ConditionSpeed *speedCond = static_cast<ConditionSpeed *>(conditionCopy);
+                    int32_t sd = speedCond->getSpeedDelta();
+                    if (sd == 0) {
+                        int32_t min, max;
+                        speedCond->getFormulaValues(target->getBaseSpeed(), min, max);
+                        sd = uniform_random(min, max);
+                    }
+
+                    if (sd != 0) {
+                        int64_t boostedSd = static_cast<int64_t>(sd) + (static_cast<int64_t>(sd) * static_cast<int64_t>(speedPct)) / 100;
+                        speedCond->setSpeedDelta(static_cast<int32_t>(boostedSd));
+                    }
+                }
+            }
+
             target->addCombatCondition(conditionCopy);
         }
     }
