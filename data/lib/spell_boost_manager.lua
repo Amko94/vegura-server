@@ -1,4 +1,6 @@
-﻿SpellBoostManager = {}
+﻿SpellBoostManager = {
+    Handlers = {}
+}
 
 local function spellHasVocation(spell, vocationId)
     for _, vocId in ipairs(spell.vocations) do

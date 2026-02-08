@@ -1,7 +1,7 @@
 local combat = Combat()
 combat:setParameter(COMBAT_PARAM_EFFECT, CONST_ME_MAGIC_BLUE)
 combat:setParameter(COMBAT_PARAM_AGGRESSIVE, false)
-
+combat:setSpellName("Magic Shield")
 local condition = Condition(CONDITION_MANASHIELD)
 condition:setParameter(CONDITION_PARAM_TICKS, 200000)
 combat:setCondition(condition)

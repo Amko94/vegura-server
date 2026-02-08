@@ -14,6 +14,6 @@ dofile('data/lib/miscellaneous/miscellaneous.lua')
 
 dofile('data/lib/monster_ids.lua')
 dofile('data/lib/json.lua')
-dofile('data/lib/taskManager.lua')
-dofile('data/lib/spell-boot-manager.lua')
+dofile('data/lib/task_manager.lua')
 dofile('data/lib/boost_types.lua')
+dofile('data/lib/spell_boost_manager.lua')

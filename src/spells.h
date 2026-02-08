@@ -80,6 +80,10 @@ public:
 
     uint32_t getInstantSpellCount(const Player *player) const;
 
+    uint32_t getManaCostWithBoost(const Player *player, uint32_t manaCost, const std::string &spellName) const;
+
+    uint32_t getExhaustionWithBoost(const Player *player, uint32_t exhaustion, const std::string &spellName) const;
+
     bool loadSpellBoostDefinitionList();
 
     uint32_t getUpgradeSpellPrice(const Player *player, const std::string &spellName) const;

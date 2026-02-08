@@ -21,7 +21,7 @@ local arrDiag = {
 }
 
 local area = createCombatArea(arr, arrDiag)
-
+combat:setSpellName("Energy Wave")
 setCombatArea(combat, area)
 
 function onCastSpell(cid, var)

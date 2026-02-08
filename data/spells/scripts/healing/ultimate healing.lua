@@ -4,16 +4,16 @@ setCombatParam(combat, COMBAT_PARAM_EFFECT, CONST_ME_MAGIC_BLUE)
 setCombatParam(combat, COMBAT_PARAM_TARGETCASTERORTOPMOST, 1)
 setCombatParam(combat, COMBAT_PARAM_AGGRESSIVE, 0)
 setCombatParam(combat, COMBAT_PARAM_DISPEL, CONDITION_PARALYZE)
-
+combat:setSpellName("Ultimate Healing")
 function onGetFormulaValues(cid, level, maglevel)
-	min = (level * 2 + maglevel * 3) * 2
-	max = (level * 2 + maglevel * 3) * 2.8	
+    min = (level * 2 + maglevel * 3) * 2
+    max = (level * 2 + maglevel * 3) * 2.8
 
-	return min, max
+    return min, max
 end
 
 setCombatCallback(combat, CALLBACK_PARAM_LEVELMAGICVALUE, "onGetFormulaValues")
 
 function onCastSpell(cid, var)
-	return doCombat(cid, combat, var)
+    return doCombat(cid, combat, var)
 end

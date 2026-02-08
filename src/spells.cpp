@@ -216,6 +216,56 @@ uint32_t Spells::getInstantSpellCount(const Player *player) const {
     return count;
 }
 
+uint32_t Spells::getManaCostWithBoost(const Player *player, uint32_t manaCost, const std::string &spellName) const {
+    uint8_t spellLevel = player->getSpellBoostLevelByName(spellName);
+    const SpellBoostDefinition *def = getSpellBoostDefinition(spellName);
+
+    if (!def) {
+        return manaCost;
+    }
+
+    float maxReduction = 0.0f;
+    for (const auto &boost : def->spellBoostLevels) {
+        if (spellLevel >= boost.level && boost.type == 1) {
+            if (boost.value > maxReduction) {
+                maxReduction = boost.value;
+            }
+        }
+    }
+
+    if (maxReduction > 0.0f) {
+        return static_cast<uint32_t>(manaCost * (1.0f - (maxReduction / 100.0f)));
+    }
+
+    return manaCost;
+}
+
+
+
+uint32_t Spells::getExhaustionWithBoost(const Player *player, uint32_t exhaustion, const std::string &spellName) const {
+    const SpellBoostDefinition *def = getSpellBoostDefinition(spellName);
+    if (!def) {
+        return exhaustion;
+    }
+
+    uint8_t spellLevel = player->getSpellBoostLevelByName(spellName);
+    float maxReduction = 0.0f;
+
+    for (const auto &boost: def->spellBoostLevels) {
+        if (spellLevel >= boost.level && boost.type == 9) { // 9 = Reduce Cooldown
+            if (boost.value > maxReduction) {
+                maxReduction = boost.value;
+            }
+        }
+    }
+
+    if (maxReduction > 0.0f) {
+        return static_cast<uint32_t>(exhaustion * (1.0f - (maxReduction / 100.0f)));
+    }
+
+    return exhaustion;
+}
+
 const std::vector<SpellBoostDefinition> &Spells::getSpellBoostDefinitionList() const {
     return spellBoostDefinitions;
 }
@@ -842,10 +892,13 @@ void Spell::postCastSpell(Player *player, bool finishedCast /*= true*/, bool pay
     if (finishedCast) {
         if (!player->hasFlag(PlayerFlag_HasNoExhaustion)) {
             if (cooldown > 0) {
-                if (aggressive) {
-                    player->addCombatExhaust(cooldown);
-                } else {
-                    player->addHealExhaust(cooldown);
+                uint32_t finalCooldown = g_spells->getExhaustionWithBoost(player, cooldown, getName());
+                if (finalCooldown > 0) {
+                    if (aggressive) {
+                        player->addCombatExhaust(finalCooldown);
+                    } else {
+                        player->addHealExhaust(finalCooldown);
+                    }
                 }
             }
 
@@ -876,14 +929,16 @@ void Spell::postCastSpell(Player *player, uint32_t manaCost, uint32_t soulCost) 
 }
 
 uint32_t Spell::getManaCost(const Player *player) const {
+    uint32_t manaCost = 0;
     if (mana != 0) {
-        return mana;
+        manaCost = mana;
+    } else if (manaPercent != 0) {
+        uint32_t maxMana = player->getMaxMana();
+        manaCost = (maxMana * manaPercent) / 100;
     }
 
-    if (manaPercent != 0) {
-        uint32_t maxMana = player->getMaxMana();
-        uint32_t manaCost = (maxMana * manaPercent) / 100;
-        return manaCost;
+    if (manaCost != 0) {
+        return g_spells->getManaCostWithBoost(player, manaCost, getName());
     }
 
     return 0;
@@ -1484,6 +1539,11 @@ bool InstantSpell::SummonMonster(const InstantSpell *spell, Creature *creature, 
         return false;
     }
 
+    uint8_t spellLevel = player->getSpellBoostLevelByName("Summon Creature");
+
+    uint8_t maxSummonMonsters = (spellLevel >= 1) ? 3 : 2;
+
+
     MonsterType *mType = g_monsters.getMonsterType(param);
     if (!mType) {
         player->sendCancelMessage(RETURNVALUE_NOTPOSSIBLE);
@@ -1504,7 +1564,7 @@ bool InstantSpell::SummonMonster(const InstantSpell *spell, Creature *creature, 
             return false;
         }
 
-        if (player->getSummonCount() >= 2) {
+        if (player->getSummonCount() >= maxSummonMonsters) {
             player->sendCancelMessage("You cannot summon more creatures.");
             g_game.addMagicEffect(player->getPosition(), CONST_ME_POFF);
             return false;
@@ -1677,7 +1737,13 @@ bool ConjureSpell::conjureItem(Creature *creature) const {
         return false;
     }
 
-    Item *newItem = Item::CreateItem(conjureId, conjureCount);
+    uint32_t count = conjureCount;
+    uint8_t spellLevel = player->getSpellBoostLevelByName(getName());
+    if (spellLevel >= 2) {
+        count *= 2;
+    }
+
+    Item *newItem = Item::CreateItem(conjureId, count);
     if (!newItem) {
         return false;
     }

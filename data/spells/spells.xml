@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Some parameters in this spell are intentionally set to 0.
+They are calculated dynamically in the spell script
+by the SpellBoost system.
+-->
+
 <spells>
-    <instant group="attack" name="Berserk" words="exori" lvl="35" mana="120" prem="1" needweapon="1" exhaustion="2000"
+    <instant group="attack" name="Berserk" words="exori" lvl="35" mana="115" prem="1" needweapon="1" exhaustion="2000"
              needlearn="0" script="attack/berserk.lua">
         <vocation name="Knight"/>
         <vocation name="Elite Knight"/>
@@ -56,7 +63,7 @@
         <vocation name="Royal Paladin"/>
     </instant>
     <instant group="attack" name="Fierce Berserk" words="exori gran" lvl="70" mana="340" prem="1" needweapon="1"
-             exhaustion="1000" needlearn="0" script="attack/fierce berserk.lua">
+             exhaustion="2000" needlearn="0" script="attack/fierce berserk.lua">
         <vocation name="Knight"/>
         <vocation name="Elite Knight"/>
     </instant>
@@ -257,17 +264,7 @@
         <vocation name="Knight"/>
         <vocation name="Elite Knight"/>
     </instant>
-    <instant group="attack" name="Divine Caldera" words="exevo mas san" lvl="50" mana="160" prem="1" selftarget="1"
-             exhaustion="4000" needlearn="0" script="attack/divine_caldera.lua">
-        <vocation name="Paladin"/>
-        <vocation name="Royal Paladin"/>
-    </instant>
-    <instant group="attack" name="Divine Missile" words="exori san" level="40" mana="20" prem="1" range="4"
-             casterTargetOrDirection="1" needlearn="0" blockwalls="1" exhaustion="2000"
-             script="attack/divine_missile.lua">
-        <vocation name="Paladin"/>
-        <vocation name="Royal Paladin"/>
-    </instant>
+
 
     <!-- Attack Runes -->
     <rune group="attack" name="Poison Field" id="2285" allowfaruse="1" charges="3" lvl="14" maglv="0" exhaustion="2000"
@@ -407,7 +404,7 @@
         <vocation name="Elder Druid"/>
     </conjure>
     <conjure name="Fireball" words="adori flam" lvl="27" mana="460" soul="3" prem="1" reagentId="2260" conjureId="2302"
-             conjureCount="10" exhaustion="2000" needlearn="0" function="conjureRune">
+             conjureCount="0" exhaustion="2000" needlearn="0" function="conjureRune">
         <vocation name="Sorcerer"/>
         <vocation name="Master Sorcerer"/>
     </conjure>
@@ -431,7 +428,7 @@
         <vocation name="Master Sorcerer"/>
     </conjure>
     <conjure name="Heavy Magic Missile" words="adori gran" lvl="25" mana="350" soul="2" reagentId="2260"
-             conjureId="2311" conjureCount="10" exhaustion="2000" needlearn="0" function="conjureRune">
+             conjureId="2311" conjureCount="0" exhaustion="2000" needlearn="0" function="conjureRune">
         <vocation name="Sorcerer"/>
         <vocation name="Master Sorcerer"/>
         <vocation name="Druid"/>
@@ -466,7 +463,7 @@
         <vocation name="Elder Druid"/>
     </conjure>
     <conjure name="Explosion" words="adevo mas hur" lvl="31" mana="570" soul="4" reagentId="2260" conjureId="2313"
-             conjureCount="6" exhaustion="2000" needlearn="0" function="conjureRune">
+             conjureCount="0" exhaustion="2000" needlearn="0" function="conjureRune">
         <vocation name="Sorcerer"/>
         <vocation name="Druid"/>
         <vocation name="Master Sorcerer"/>

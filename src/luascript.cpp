@@ -960,6 +960,7 @@ void LuaScriptInterface::registerFunctions() {
 
 
     lua_register(luaState, "getSpellBoostDefinitionsList", LuaScriptInterface::luaGetSpellBoostDefinitionList);
+    lua_register(luaState, "getBoostTypesBySpellName", LuaScriptInterface::luaGetBoostTypesBySpellName);
     lua_register(luaState, "getMonsterTaskDefinitionList", LuaScriptInterface::luaGetMonsterTaskDefinitionList);
     lua_register(luaState, "getMonsterTaskDefinitionById", LuaScriptInterface::luaGetMonsterTaskDefinitionById);
 
@@ -2034,6 +2035,7 @@ void LuaScriptInterface::registerFunctions() {
     registerMethod("Player", "getSpellBoostLevels", LuaScriptInterface::luaGetPlayerSpellBoostLevels);
     registerMethod("Player", "upgradeSpellLevel", LuaScriptInterface::luaPlayerUpgradeSpellLevel);
     registerMethod("Player", "getUpgradeSpellPrice", LuaScriptInterface::luaPlayerGetUpgradeSpellPrice);
+    registerMethod("Player", "getSpellBoostLevelByName", LuaScriptInterface::luaPlayerGetSpellBoostLevelByName);
     registerMethod("Player", "getSpellBoostValue", LuaScriptInterface::luaPlayerGetSpellBoostValue);
     registerMethod("Player", "getGuid", LuaScriptInterface::luaPlayerGetGuid);
     registerMethod("Player", "getIp", LuaScriptInterface::luaPlayerGetIp);
@@ -2380,6 +2382,7 @@ void LuaScriptInterface::registerFunctions() {
     registerMethod("Combat", "setOrigin", LuaScriptInterface::luaCombatSetOrigin);
 
     registerMethod("Combat", "execute", LuaScriptInterface::luaCombatExecute);
+    registerMethod("Combat", "setSpellName", LuaScriptInterface::luaCombatSetSpellName);
 
     // Condition
     registerClass("Condition", "", LuaScriptInterface::luaConditionCreate);
@@ -3992,6 +3995,18 @@ int LuaScriptInterface::luaPlayerGetUpgradeSpellPrice(lua_State *L) {
     return 1;
 }
 
+int LuaScriptInterface::luaPlayerGetSpellBoostLevelByName(lua_State *L) {
+    Player *player = getUserdata<Player>(L, 1);
+    if (!player) {
+        lua_pushnil(L);
+        return 1;
+    }
+
+    std::string spellName = getString(L, 2);
+    lua_pushinteger(L, player->getSpellBoostLevelByName(spellName));
+    return 1;
+}
+
 int LuaScriptInterface::luaPlayerGetSpellBoostValue(lua_State *L) {
     Player *player = getUserdata<Player>(L, 1);
     if (!player) {
@@ -4075,6 +4090,32 @@ int LuaScriptInterface::luaGetSpellBoostDefinitionList(lua_State *L) {
         lua_setfield(L, -2, "spellBoostLevels");
 
         lua_rawseti(L, -2, index++);
+    }
+
+    return 1;
+}
+
+
+int LuaScriptInterface::luaGetBoostTypesBySpellName(lua_State *L) {
+    // getBoostTypesBySpellName(spellName)
+    std::string spellName = getString(L, 1);
+    const SpellBoostDefinition *def = g_spells->getSpellBoostDefinition(spellName);
+
+    lua_newtable(L);
+
+    if (def) {
+        int index = 1;
+        for (const auto &lvl: def->spellBoostLevels) {
+            lua_newtable(L);
+
+            lua_pushinteger(L, lvl.level);
+            lua_setfield(L, -2, "level");
+
+            lua_pushinteger(L, lvl.type);
+            lua_setfield(L, -2, "type");
+
+            lua_rawseti(L, -2, index++);
+        }
     }
 
     return 1;
@@ -10817,6 +10858,14 @@ int LuaScriptInterface::luaCombatExecute(lua_State *L) {
     }
 
     pushBoolean(L, true);
+    return 1;
+}
+
+int LuaScriptInterface::luaCombatSetSpellName(lua_State *L) {
+    Combat *combat = getUserdata<Combat>(L, 1);
+
+    combat->setSpellName(getString(L, 2));
+
     return 1;
 }
 

@@ -26,7 +26,7 @@ bool MonsterTaskManager::loadMonsterTaskDefinitionList() {
         pugi::xml_attribute attr;
 
         if ((attr = taskNode.attribute("id"))) {
-            def.id = pugi::cast<uint32_t>(attr.value());
+            def.id = attr.as_uint();
         }
 
         if ((attr = taskNode.attribute("name"))) {
@@ -34,11 +34,11 @@ bool MonsterTaskManager::loadMonsterTaskDefinitionList() {
         }
 
         if ((attr = taskNode.attribute("category"))) {
-            def.category = pugi::cast<uint8_t>(attr.value());
+            def.category = attr.as_uint();
         }
 
         if ((attr = taskNode.attribute("experience"))) {
-            def.experience = pugi::cast<uint32_t>(attr.value());
+            def.experience = attr.as_uint();
         }
 
         for (auto monsterNode: taskNode.child("monsters").children("monster")) {
@@ -49,7 +49,7 @@ bool MonsterTaskManager::loadMonsterTaskDefinitionList() {
             }
 
             if ((attr = monsterNode.attribute("lookType"))) {
-                monster.lookType = pugi::cast<uint16_t>(attr.value());
+                monster.lookType = attr.as_uint();
             }
 
             def.monsters.push_back(monster);

@@ -4,18 +4,18 @@ setCombatParam(combat, COMBAT_PARAM_EFFECT, CONST_ME_ENERGYHIT)
 setCombatFormula(combat, COMBAT_FORMULA_LEVELMAGIC, -1.3, -30, -1.7, 0)
 
 local arr = {
-{0, 1, 0},
-{0, 1, 0},
-{0, 1, 0},
-{0, 1, 0},
-{0, 1, 0},
-{0, 3, 0},
+    { 0, 1, 0 },
+    { 0, 1, 0 },
+    { 0, 1, 0 },
+    { 0, 1, 0 },
+    { 0, 1, 0 },
+    { 0, 3, 0 },
 }
 
 local area = createCombatArea(arr)
-
+combat:setSpellName("Great Energy Beam")
 setCombatArea(combat, area)
 
 function onCastSpell(cid, var)
-	return doCombat(cid, combat, var)
+    return doCombat(cid, combat, var)
 end

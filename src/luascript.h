@@ -600,6 +600,7 @@ protected:
 
     // Game
     static int luaGetSpellBoostDefinitionList(lua_State *L);
+    static int luaGetBoostTypesBySpellName(lua_State *L);
 
     static int luaGetMonsterTaskDefinitionList(lua_State *L);
 
@@ -993,6 +994,7 @@ protected:
 
     static int luaPlayerGetUpgradeSpellPrice(lua_State *L);
 
+    static int luaPlayerGetSpellBoostLevelByName(lua_State *L);
     static int luaPlayerGetSpellBoostValue(lua_State *L);
 
     static int luaPlayerUpgradeSpellLevel(lua_State *L);
@@ -1457,6 +1459,7 @@ protected:
     static int luaCombatSetOrigin(lua_State *L);
 
     static int luaCombatExecute(lua_State *L);
+    static int luaCombatSetSpellName(lua_State *L);
 
     // Condition
     static int luaConditionCreate(lua_State *L);
